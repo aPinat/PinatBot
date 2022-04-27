@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinatBot", "PinatBot\PinatBot.csproj", "{ECA3CD8D-C8A6-4DFA-80D7-A10725BE298B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinatBot.Caching", "PinatBot.Caching\PinatBot.Caching.csproj", "{22C4BBE4-2F4C-46A5-BEE3-06CD10C2EDBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinatBot.Data", "PinatBot.Data\PinatBot.Data.csproj", "{F12C3FB4-FB59-40FF-A093-5C295D7EBE51}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ECA3CD8D-C8A6-4DFA-80D7-A10725BE298B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECA3CD8D-C8A6-4DFA-80D7-A10725BE298B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECA3CD8D-C8A6-4DFA-80D7-A10725BE298B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECA3CD8D-C8A6-4DFA-80D7-A10725BE298B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22C4BBE4-2F4C-46A5-BEE3-06CD10C2EDBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22C4BBE4-2F4C-46A5-BEE3-06CD10C2EDBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22C4BBE4-2F4C-46A5-BEE3-06CD10C2EDBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22C4BBE4-2F4C-46A5-BEE3-06CD10C2EDBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F12C3FB4-FB59-40FF-A093-5C295D7EBE51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F12C3FB4-FB59-40FF-A093-5C295D7EBE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F12C3FB4-FB59-40FF-A093-5C295D7EBE51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F12C3FB4-FB59-40FF-A093-5C295D7EBE51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

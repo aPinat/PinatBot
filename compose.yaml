@@ -1,0 +1,45 @@
+services:
+  pinatbot:
+    image: 'ghcr.io/apinat/pinatbot:latest'
+    container_name: pinatbot
+    restart: unless-stopped
+    volumes:
+      - './PinatBot/appsettings.json:/app/appsettings.json'
+    depends_on:
+      - redis
+      - postgres
+      - lavalink
+      - seq
+  redis:
+    image: 'redis:latest'
+    container_name: redis-pinatbot
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+  postgres:
+    image: 'postgres:latest'
+    container_name: postgres-pinatbot
+    restart: unless-stopped
+    ports:
+      - 5500:5432
+    environment:
+      POSTGRES_USER: pinatbot
+      POSTGRES_PASSWORD: pinatbot
+      POSTGRES_DB: pinatbot
+  lavalink:
+    image: 'fredboat/lavalink:dev'
+    container_name: lavalink-pinatbot
+    restart: unless-stopped
+    ports:
+      - 2333:2333
+    volumes:
+      - './lavalink.yaml:/opt/Lavalink/application.yml'
+  seq:
+    image: 'datalust/seq:latest'
+    container_name: seq-pinatbot
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 5341:5341
+    environment:
+      ACCEPT_EULA: 'Y'
