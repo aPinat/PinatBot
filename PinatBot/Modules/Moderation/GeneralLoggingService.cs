@@ -104,7 +104,7 @@ public class GeneralLoggingService
         var attachmentAfter = m.Attachments.IsDefined(out var attachments) ? attachments.Count.ToString() : "None";
         builder.AddField("Attachments", $"{attachmentBefore} >> {attachmentAfter}", true);
 
-        if (!previousMessage.Attachments.Any())
+        if (!previousMessage.Attachments.Any() || attachmentBefore == attachments?.Count)
             goto SEND;
 
         var attachmentsLog = new List<OneOf<FileData, IPartialAttachment>>();
