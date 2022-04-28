@@ -6,8 +6,8 @@ namespace PinatBot.Modules.Moderation;
 
 public class VoiceStateLoggingResponder : IResponder<IVoiceStateUpdate>
 {
-    public VoiceStateLoggingResponder(VoiceStateLoggingService voiceStateLoggingService) => VoiceStateLoggingService = voiceStateLoggingService;
-    private VoiceStateLoggingService VoiceStateLoggingService { get; }
+    private readonly VoiceStateLoggingService _voiceStateLoggingService;
+    public VoiceStateLoggingResponder(VoiceStateLoggingService voiceStateLoggingService) => _voiceStateLoggingService = voiceStateLoggingService;
 
-    public Task<Result> RespondAsync(IVoiceStateUpdate vsu, CancellationToken ct = default) => VoiceStateLoggingService.LogVoiceStateUpdateAsync(vsu, ct);
+    public Task<Result> RespondAsync(IVoiceStateUpdate vsu, CancellationToken ct = default) => _voiceStateLoggingService.LogVoiceStateUpdateAsync(vsu, ct);
 }

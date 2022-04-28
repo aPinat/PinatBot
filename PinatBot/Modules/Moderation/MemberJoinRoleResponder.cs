@@ -6,8 +6,9 @@ namespace PinatBot.Modules.Moderation;
 
 public class MemberJoinRoleResponder : IResponder<IGuildMemberAdd>
 {
-    public MemberJoinRoleResponder(MemberJoinRoleService memberJoinRoleService) => MemberJoinRoleService = memberJoinRoleService;
-    private MemberJoinRoleService MemberJoinRoleService { get; }
+    private readonly MemberJoinRoleService _memberJoinRoleService;
+    public MemberJoinRoleResponder(MemberJoinRoleService memberJoinRoleService) => _memberJoinRoleService = memberJoinRoleService;
 
-    public Task<Result> RespondAsync(IGuildMemberAdd member, CancellationToken ct = default) => MemberJoinRoleService.GiveMemberJoinRoleAsync(member, ct);
+
+    public Task<Result> RespondAsync(IGuildMemberAdd member, CancellationToken ct = default) => _memberJoinRoleService.GiveMemberJoinRoleAsync(member, ct);
 }

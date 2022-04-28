@@ -1,9 +1,7 @@
 using System.Drawing;
 using Microsoft.EntityFrameworkCore;
-using PinatBot.Caching.VoiceStates;
 using PinatBot.Data;
 using Remora.Discord.API.Abstractions.Gateway.Events;
-using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Rest.Core;
 using Remora.Results;
@@ -12,27 +10,25 @@ namespace PinatBot.Modules.Moderation;
 
 public class VoiceStateLoggingService
 {
-    public VoiceStateLoggingService(IDbContextFactory<Database> dbContextFactory, VoiceStateCacheService voiceStateCache, IDiscordRestChannelAPI channelApi)
-    {
-        DbContextFactory = dbContextFactory;
-        VoiceStateCache = voiceStateCache;
-        ChannelApi = channelApi;
-    }
+    private readonly IDbContextFactory<Database> _dbContextFactory;
+    private readonly Discord _discord;
 
-    private IDbContextFactory<Database> DbContextFactory { get; }
-    private VoiceStateCacheService VoiceStateCache { get; }
-    private IDiscordRestChannelAPI ChannelApi { get; }
+    public VoiceStateLoggingService(IDbContextFactory<Database> dbContextFactory, Discord discord)
+    {
+        _dbContextFactory = dbContextFactory;
+        _discord = discord;
+    }
 
     internal async Task<Result> LogVoiceStateUpdateAsync(IVoiceStateUpdate vsu, CancellationToken cancellationToken)
     {
         if (!vsu.GuildID.IsDefined(out var guildId) || !vsu.Member.IsDefined(out var member) || !member.User.IsDefined(out var user) || (user.IsBot.IsDefined(out var isBot) && isBot))
             return Result.FromSuccess();
 
-        var cacheResult = VoiceStateCache.Get(guildId, vsu.UserID);
+        var cacheResult = _discord.Cache.VoiceStates.Get(guildId, vsu.UserID);
         if (cacheResult.IsDefined(out var oldVoiceState) && oldVoiceState.ChannelID == vsu.ChannelID)
             return Result.FromSuccess();
 
-        await using var database = await DbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         var logging = database.VoiceStateLoggingConfigs.AsNoTracking().FirstOrDefault(config => config.GuildId == guildId.Value);
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
@@ -44,7 +40,7 @@ public class VoiceStateLoggingService
 
         if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.HasValue is null or false)
         {
-            var channelResult = await ChannelApi.GetChannelAsync(vsu.ChannelID.Value, cancellationToken);
+            var channelResult = await _discord.Rest.Channel.GetChannelAsync(vsu.ChannelID.Value, cancellationToken);
             if (!channelResult.IsDefined(out var channel))
                 return Result.FromError(channelResult);
 
@@ -53,7 +49,7 @@ public class VoiceStateLoggingService
         }
         else if (!vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.HasValue is true)
         {
-            var channelResult = await ChannelApi.GetChannelAsync(oldVoiceState.ChannelID.Value, cancellationToken);
+            var channelResult = await _discord.Rest.Channel.GetChannelAsync(oldVoiceState.ChannelID.Value, cancellationToken);
             if (!channelResult.IsDefined(out var channel))
                 return Result.FromError(channelResult);
 
@@ -62,8 +58,8 @@ public class VoiceStateLoggingService
         }
         else if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.HasValue is true)
         {
-            var oldChannelTask = ChannelApi.GetChannelAsync(oldVoiceState.ChannelID.Value, cancellationToken);
-            var newChannelTask = ChannelApi.GetChannelAsync(vsu.ChannelID.Value, cancellationToken);
+            var oldChannelTask = _discord.Rest.Channel.GetChannelAsync(oldVoiceState.ChannelID.Value, cancellationToken);
+            var newChannelTask = _discord.Rest.Channel.GetChannelAsync(vsu.ChannelID.Value, cancellationToken);
 
             var oldChannelResult = await oldChannelTask;
             if (!oldChannelResult.IsDefined(out var oldChannel))
@@ -85,7 +81,7 @@ public class VoiceStateLoggingService
         if (!buildResult.IsDefined(out var embed))
             return Result.FromError(buildResult);
 
-        var messageResult = await ChannelApi.CreateMessageAsync(new Snowflake(logging.ChannelId), embeds: new[] { embed }, ct: cancellationToken);
+        var messageResult = await _discord.Rest.Channel.CreateMessageAsync(new Snowflake(logging.ChannelId), embeds: new[] { embed }, ct: cancellationToken);
         return messageResult.IsSuccess ? Result.FromSuccess() : Result.FromError(messageResult);
     }
 }

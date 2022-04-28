@@ -4,7 +4,7 @@ using Remora.Rest.Core;
 
 namespace PinatBot;
 
-internal static class Extensions
+public static class Extensions
 {
     /// <summary>
     ///     Fisher–Yates shuffle.
