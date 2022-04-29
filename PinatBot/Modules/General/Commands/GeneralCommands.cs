@@ -3,6 +3,7 @@ using System.Text.Json;
 using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
+using Remora.Discord.Commands.Contexts;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Results;
 
@@ -11,12 +12,14 @@ namespace PinatBot.Modules.General.Commands;
 public class GeneralCommands : CommandGroup
 {
     private readonly Discord _discord;
+    private readonly ICommandContext _context;
     private readonly FeedbackService _feedbackService;
 
-    public GeneralCommands(FeedbackService feedbackService, Discord discord)
+    public GeneralCommands(FeedbackService feedbackService, Discord discord, ICommandContext context)
     {
         _feedbackService = feedbackService;
         _discord = discord;
+        _context = context;
     }
 
     [Command("echo", "say")]
@@ -57,9 +60,18 @@ public class GeneralCommands : CommandGroup
         return await _feedbackService.SendContextualSuccessAsync($"Presence for {user.Mention()}\n```{presenceJson}```");
     }
 
+    [Command("user", "member", "whois")]
+    [Description("Get info about a user.")]
+    public async Task<IResult> UserInfoAsync([Description("User to get info for")] IUser user)
+    {
+        if (!_context.GuildID.IsDefined(out var guildId))
+            goto USER;
 
-    [Command("userinfo", "user", "member", "whois")]
-    [Description("Get info about a member.")]
-    public async Task<IResult> UserInfoAsync([Description("Member to get info for")] IGuildMember member) =>
-        await _feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(member, _discord.JsonSerializerOptions)}```");
+        var guildMember = await _discord.Rest.Guild.GetGuildMemberAsync(guildId, user.ID);
+        if (guildMember.IsDefined(out var member))
+            return await _feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(member, _discord.JsonSerializerOptions)}```");
+
+        USER:
+        return await _feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(user, _discord.JsonSerializerOptions)}```");
+    }
 }

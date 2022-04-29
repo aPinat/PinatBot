@@ -14,7 +14,6 @@ public static class ServiceCollectionExtensions
         services
             .AddTransient<ICommandPrefixMatcher, PrefixMatcher>()
             .AddDiscordCommands(true)
-            .AddNGetTextLocalizations()
             .AddCommandTree()
             .WithCommandGroup<GeneralCommands>()
             .Finish()

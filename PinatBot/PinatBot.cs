@@ -11,7 +11,7 @@ using Remora.Results;
 
 namespace PinatBot;
 
-public sealed class PinatBot : IHostedService
+public sealed class PinatBot : BackgroundService
 {
     private readonly Configuration _configuration;
     private readonly IDbContextFactory<Database> _dbContextFactory;
@@ -19,7 +19,6 @@ public sealed class PinatBot : IHostedService
     private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<PinatBot> _logger;
     private readonly SlashService _slashService;
-    private Task<Result>? _discordGatewayClientTask;
 
     public PinatBot(IHostEnvironment hostEnvironment, IConfiguration configuration, ILogger<PinatBot> logger, IDbContextFactory<Database> dbContextFactory,
         DiscordGatewayClient discordGatewayClient, SlashService slashService)
@@ -32,13 +31,13 @@ public sealed class PinatBot : IHostedService
         _slashService = slashService;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var isDevelopment = _hostEnvironment.IsDevelopment();
         var testGuild = _configuration.Discord.TestGuild;
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
-        await database.Database.MigrateAsync(cancellationToken);
+        await using var database = await _dbContextFactory.CreateDbContextAsync(stoppingToken);
+        await database.Database.MigrateAsync(stoppingToken);
 
         var checkSlashSupport = _slashService.SupportsSlashCommands();
         if (!checkSlashSupport.IsSuccess)
@@ -47,21 +46,20 @@ public sealed class PinatBot : IHostedService
         }
         else if (isDevelopment && testGuild.HasValue)
         {
-            var updateSlash = await _slashService.UpdateSlashCommandsAsync(new Snowflake(testGuild.Value), ct: cancellationToken);
+            var updateSlash = await _slashService.UpdateSlashCommandsAsync(new Snowflake(testGuild.Value), ct: stoppingToken);
             if (!updateSlash.IsSuccess)
                 _logger.LogWarning("Failed to update slash commands: {Reason}", updateSlash.Error?.Message);
         }
         else
         {
-            var updateSlash = await _slashService.UpdateSlashCommandsAsync(ct: cancellationToken);
+            var updateSlash = await _slashService.UpdateSlashCommandsAsync(ct: stoppingToken);
             if (!updateSlash.IsSuccess)
                 _logger.LogWarning("Failed to update slash commands: {Reason}", updateSlash.Error?.Message);
         }
 
-        while (!cancellationToken.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _discordGatewayClientTask = _discordGatewayClient.RunAsync(cancellationToken);
-            var runResult = await _discordGatewayClientTask;
+            var runResult = await _discordGatewayClient.RunAsync(stoppingToken);
             if (runResult.IsSuccess)
                 continue;
 
@@ -83,13 +81,7 @@ public sealed class PinatBot : IHostedService
                     break;
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
         }
-    }
-
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        if (_discordGatewayClientTask is not null)
-            await _discordGatewayClientTask;
     }
 }
