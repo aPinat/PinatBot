@@ -11,8 +11,8 @@ namespace PinatBot.Modules.General.Commands;
 
 public class GeneralCommands : CommandGroup
 {
-    private readonly Discord _discord;
     private readonly ICommandContext _context;
+    private readonly Discord _discord;
     private readonly FeedbackService _feedbackService;
 
     public GeneralCommands(FeedbackService feedbackService, Discord discord, ICommandContext context)
@@ -24,7 +24,7 @@ public class GeneralCommands : CommandGroup
 
     [Command("echo", "say")]
     [Description("Echoes the message of the user.")]
-    public async Task<IResult> SayAsync([Description("string to echo")] string echo)
+    public async Task<IResult> SayAsync([Description("string to echo")] [Greedy] string echo)
         => await _feedbackService.SendContextualNeutralAsync(echo);
 
     [Command("ping")]

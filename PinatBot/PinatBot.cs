@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PinatBot.CommandHelpers;
 using PinatBot.Data;
 using Remora.Discord.Commands.Services;
 using Remora.Discord.Gateway;
@@ -39,20 +40,20 @@ public sealed class PinatBot : BackgroundService
         await using var database = await _dbContextFactory.CreateDbContextAsync(stoppingToken);
         await database.Database.MigrateAsync(stoppingToken);
 
-        var checkSlashSupport = _slashService.SupportsSlashCommands();
+        var checkSlashSupport = _slashService.SupportsSlashCommands(TreeNameResolver.InteractionCommandTreeName);
         if (!checkSlashSupport.IsSuccess)
         {
             _logger.LogWarning("The registered commands of the bot don't support slash commands: {Reason}", checkSlashSupport.Error?.Message);
         }
         else if (isDevelopment && testGuild.HasValue)
         {
-            var updateSlash = await _slashService.UpdateSlashCommandsAsync(new Snowflake(testGuild.Value), ct: stoppingToken);
+            var updateSlash = await _slashService.UpdateSlashCommandsAsync(new Snowflake(testGuild.Value), TreeNameResolver.InteractionCommandTreeName, stoppingToken);
             if (!updateSlash.IsSuccess)
                 _logger.LogWarning("Failed to update slash commands: {Reason}", updateSlash.Error?.Message);
         }
         else
         {
-            var updateSlash = await _slashService.UpdateSlashCommandsAsync(ct: stoppingToken);
+            var updateSlash = await _slashService.UpdateSlashCommandsAsync(treeName: TreeNameResolver.InteractionCommandTreeName, ct: stoppingToken);
             if (!updateSlash.IsSuccess)
                 _logger.LogWarning("Failed to update slash commands: {Reason}", updateSlash.Error?.Message);
         }

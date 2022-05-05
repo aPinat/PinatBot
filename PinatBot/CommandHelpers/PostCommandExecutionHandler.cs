@@ -14,8 +14,8 @@ namespace PinatBot.CommandHelpers;
 
 public class PostCommandExecutionHandler : IPostExecutionEvent
 {
-    private readonly FeedbackService _feedbackService;
     private readonly Discord _discord;
+    private readonly FeedbackService _feedbackService;
     private readonly ILogger<PostCommandExecutionHandler> _logger;
 
     public PostCommandExecutionHandler(ILogger<PostCommandExecutionHandler> logger, FeedbackService feedbackService, Discord discord)
@@ -61,12 +61,10 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
 
         // Not ideal, but most errors occur in preparation of the command when no interaction response has been created yet.
         if (context is InteractionContext interaction && error is not ExceptionError)
-        {
             await _discord.Rest.Interaction.CreateInteractionResponseAsync(interaction.ID, interaction.Token,
                 new InteractionResponse(InteractionCallbackType.DeferredChannelMessageWithSource,
                     new Optional<OneOf<IInteractionMessageCallbackData, IInteractionAutocompleteCallbackData, IInteractionModalCallbackData>>(
                         new InteractionMessageCallbackData(Flags: MessageFlags.Ephemeral))), ct: ct);
-        }
 
         Result<IReadOnlyList<IMessage>> replyResult = default;
         switch (error)
