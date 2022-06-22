@@ -38,7 +38,13 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
             case InteractionContext interactionContext:
                 {
                     type = "interaction";
-                    interactionContext.Data.UnpackInteraction(out var commandPath, out var parameters);
+                    if (!interactionContext.Data.TryPickT0(out var applicationCommandData, out _))
+                    {
+                        _logger.LogWarning("Interaction is not of type IApplicationCommandData, but of type {Type}", interactionContext.Data.Value.GetType());
+                        goto SUCCESS;
+                    }
+
+                    applicationCommandData.UnpackInteraction(out var commandPath, out var parameters);
                     command = string.Join(' ', commandPath) +
                               (parameters.Any() ? " " : string.Empty) +
                               string.Join(' ', parameters.Select(pair => pair.Key + " = [" + string.Join(" ", pair.Value) + "]"));
@@ -59,8 +65,7 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
         while (error is AggregateError aggregateError)
             error = aggregateError.Errors.First().Error;
 
-        // Not ideal, but most errors occur in preparation of the command when no interaction response has been created yet.
-        if (context is InteractionContext interaction && error is not ExceptionError)
+        if (context is InteractionContext { HasRespondedToInteraction: false } interaction)
             await _discord.Rest.Interaction.CreateInteractionResponseAsync(interaction.ID, interaction.Token,
                 new InteractionResponse(InteractionCallbackType.DeferredChannelMessageWithSource,
                     new Optional<OneOf<IInteractionMessageCallbackData, IInteractionAutocompleteCallbackData, IInteractionModalCallbackData>>(
@@ -100,7 +105,7 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
         if (!replyResult.IsSuccess)
             return Result.FromError(replyResult);
 
-        SUCCESS:
+    SUCCESS:
         return Result.FromSuccess();
     }
 }

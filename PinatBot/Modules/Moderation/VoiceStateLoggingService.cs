@@ -24,8 +24,8 @@ public class VoiceStateLoggingService
         if (!vsu.GuildID.IsDefined(out var guildId) || !vsu.Member.IsDefined(out var member) || !member.User.IsDefined(out var user) || (user.IsBot.IsDefined(out var isBot) && isBot))
             return Result.FromSuccess();
 
-        var cacheResult = _discord.Cache.VoiceStates.Get(guildId, vsu.UserID);
-        if (cacheResult.IsDefined(out var oldVoiceState) && oldVoiceState.ChannelID == vsu.ChannelID)
+        var cacheResult = _discord.GatewayCache.GetVoiceState(guildId, vsu.UserID);
+        if (cacheResult.IsDefined(out var oldVoiceState) && oldVoiceState.ChannelID.IsDefined(out var channelID) && channelID == vsu.ChannelID)
             return Result.FromSuccess();
 
         await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
@@ -38,34 +38,31 @@ public class VoiceStateLoggingService
             Timestamp = DateTimeOffset.Now, Author = new EmbedAuthorBuilder(user.DiscordTag(), iconUrl: user.AvatarUrl().ToString()), Footer = new EmbedFooterBuilder("Member ID: " + user.ID)
         };
 
-        if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.HasValue is null or false)
+        if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.Value.HasValue is null or false)
         {
-            var channelResult = await _discord.Rest.Channel.GetChannelAsync(vsu.ChannelID.Value, cancellationToken);
+            var channelResult = _discord.GatewayCache.GetChannel(guildId, vsu.ChannelID.Value);
             if (!channelResult.IsDefined(out var channel))
                 return Result.FromError(channelResult);
 
             builder.Colour = Color.Lime;
             builder.Description = $"{user.Mention()} **joined** `#{channel.Name.Value}` ({channel.Mention()})";
         }
-        else if (!vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.HasValue is true)
+        else if (!vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id) is true && id.HasValue)
         {
-            var channelResult = await _discord.Rest.Channel.GetChannelAsync(oldVoiceState.ChannelID.Value, cancellationToken);
+            var channelResult = _discord.GatewayCache.GetChannel(guildId, id.Value);
             if (!channelResult.IsDefined(out var channel))
                 return Result.FromError(channelResult);
 
             builder.Colour = Color.Red;
             builder.Description = $"{user.Mention()} **left** `#{channel.Name.Value}` ({channel.Mention()})";
         }
-        else if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.HasValue is true)
+        else if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id2) is true && id2.HasValue)
         {
-            var oldChannelTask = _discord.Rest.Channel.GetChannelAsync(oldVoiceState.ChannelID.Value, cancellationToken);
-            var newChannelTask = _discord.Rest.Channel.GetChannelAsync(vsu.ChannelID.Value, cancellationToken);
-
-            var oldChannelResult = await oldChannelTask;
+            var oldChannelResult = _discord.GatewayCache.GetChannel(guildId, id2.Value);
             if (!oldChannelResult.IsDefined(out var oldChannel))
                 return Result.FromError(oldChannelResult);
 
-            var newChannelResult = await newChannelTask;
+            var newChannelResult = _discord.GatewayCache.GetChannel(guildId, vsu.ChannelID.Value);
             if (!newChannelResult.IsDefined(out var newChannel))
                 return Result.FromError(newChannelResult);
 

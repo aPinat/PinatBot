@@ -21,8 +21,12 @@ public sealed class PinatBot : BackgroundService
     private readonly ILogger<PinatBot> _logger;
     private readonly SlashService _slashService;
 
-    public PinatBot(IHostEnvironment hostEnvironment, IConfiguration configuration, ILogger<PinatBot> logger, IDbContextFactory<Database> dbContextFactory,
-        DiscordGatewayClient discordGatewayClient, SlashService slashService)
+    public PinatBot(IHostEnvironment hostEnvironment,
+        IConfiguration configuration,
+        ILogger<PinatBot> logger,
+        IDbContextFactory<Database> dbContextFactory,
+        DiscordGatewayClient discordGatewayClient,
+        SlashService slashService)
     {
         _hostEnvironment = hostEnvironment;
         _configuration = configuration.Get<Configuration>();

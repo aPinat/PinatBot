@@ -74,11 +74,11 @@ public static class Extensions
     public static string Link(this IPartialChannel channel, Snowflake? guildId = null, Snowflake? channelId = null) =>
         $"https://discord.com/channels/{guildId ?? channel.GuildID.Value}/{channelId ?? channel.ID.Value}";
 
-    public static string Link(this IMessage message) =>
-        $"https://discord.com/channels/{message.GuildID}/{message.ChannelID}/{message.ID}";
+    public static string Link(this IMessage message, Snowflake guildId) =>
+        $"https://discord.com/channels/{guildId}/{message.ChannelID}/{message.ID}";
 
-    public static string Link(this IPartialMessage message, Snowflake? guildId = null, Snowflake? channelId = null, Snowflake? messageId = null) =>
-        $"https://discord.com/channels/{guildId ?? message.GuildID.Value}/{channelId ?? message.ChannelID.Value}/{messageId ?? message.ID.Value}";
+    public static string Link(this IPartialMessage message, Snowflake guildId, Snowflake? channelId = null, Snowflake? messageId = null) =>
+        $"https://discord.com/channels/{guildId}/{channelId ?? message.ChannelID.Value}/{messageId ?? message.ID.Value}";
 
     public static string DiscordTag(this IUser user)
         => $"{user.Username}#{user.Discriminator:0000}";

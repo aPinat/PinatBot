@@ -37,7 +37,7 @@ public class PrefixMatcher : ICommandPrefixMatcher
         if (!_messageContext.GuildID.HasValue)
             return Result<(bool Matches, int ContentStartIndex)>.FromSuccess((true, 0));
 
-        FALSE:
+    FALSE:
         return Result<(bool Matches, int ContentStartIndex)>.FromSuccess((false, 0));
     }
 }

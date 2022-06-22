@@ -9,7 +9,6 @@ public class GeneralLoggingResponder : IResponder<IMessageUpdate>, IResponder<IM
     private readonly GeneralLoggingService _generalLoggingService;
     public GeneralLoggingResponder(GeneralLoggingService generalLoggingService) => _generalLoggingService = generalLoggingService;
 
-
     public Task<Result> RespondAsync(IGuildMemberAdd member, CancellationToken ct = default) => _generalLoggingService.LogGuildMemberAddedAsync(member, ct);
 
     public Task<Result> RespondAsync(IGuildMemberRemove member, CancellationToken ct = default) => _generalLoggingService.LogGuildMemberRemovedAsync(member, ct);

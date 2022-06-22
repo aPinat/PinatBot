@@ -34,44 +34,53 @@ public class GeneralCommands : CommandGroup
 
     [Command("game")]
     [Description("Get current game for user.")]
-    public async Task<IResult> GameAsync([Description("User to get game for")] IUser user)
+    public async Task<IResult> GameAsync([Description("Member to get game for")] IGuildMember member)
     {
-        var result = _discord.Cache.Presences.Get(user.ID);
+        if (!_context.GuildID.IsDefined(out var guildId))
+            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
-        if (!result.IsDefined(out var presence))
-            return await _feedbackService.SendContextualNeutralAsync($"{user.Mention()} is not currently playing anything.");
+        if (!member.User.IsDefined(out var memberUser))
+            return await _feedbackService.SendContextualErrorAsync("Could not get user.");
 
-        var activity = presence.Activities?.FirstOrDefault(activity => activity.Type == ActivityType.Game);
+        if (!_discord.GatewayCache.GetGuildPresence(guildId, memberUser.ID).IsDefined(out var presence) ||
+            !presence.Activities.IsDefined(out var activities))
+            return await _feedbackService.SendContextualNeutralAsync($"{member.Mention()} is not currently playing anything.");
+
+        var activity = activities.FirstOrDefault(activity => activity.Type == ActivityType.Game);
         return activity is null
-            ? await _feedbackService.SendContextualNeutralAsync($"{user.Mention()} is not currently playing anything.")
-            : await _feedbackService.SendContextualSuccessAsync($"{user.Mention()} is currently playing {activity.Name}");
+            ? await _feedbackService.SendContextualNeutralAsync($"{member.Mention()} is not currently playing anything.")
+            : await _feedbackService.SendContextualSuccessAsync($"{member.Mention()} is currently playing {activity.Name}");
     }
 
     [Command("presence")]
     [Description("Get presence for user.")]
-    public async Task<IResult> PresenceAsync([Description("User to get presence for")] IUser user)
+    public async Task<IResult> PresenceAsync([Description("Member to get presence for")] IGuildMember member)
     {
-        var result = _discord.Cache.Presences.Get(user.ID);
+        if (!_context.GuildID.IsDefined(out var guildId))
+            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
-        if (!result.IsDefined(out var presence))
-            return await _feedbackService.SendContextualErrorAsync($"Cannot find presence for {user.Mention()}.");
+        if (!member.User.IsDefined(out var memberUser))
+            return await _feedbackService.SendContextualErrorAsync("Could not get user.");
+
+        if (!_discord.GatewayCache.GetGuildPresence(guildId, memberUser.ID).IsDefined(out var presence))
+            return await _feedbackService.SendContextualErrorAsync($"Cannot find presence for {member.Mention()}.");
 
         var presenceJson = JsonSerializer.Serialize(presence, _discord.JsonSerializerOptions);
-        return await _feedbackService.SendContextualSuccessAsync($"Presence for {user.Mention()}\n```{presenceJson}```");
+        return await _feedbackService.SendContextualSuccessAsync($"Presence for {member.Mention()}\n```{presenceJson}```");
     }
 
     [Command("user", "member", "whois")]
-    [Description("Get info about a user.")]
+    [Description("Get info for a user.")]
     public async Task<IResult> UserInfoAsync([Description("User to get info for")] IUser user)
     {
         if (!_context.GuildID.IsDefined(out var guildId))
             goto USER;
 
-        var guildMember = await _discord.Rest.Guild.GetGuildMemberAsync(guildId, user.ID);
-        if (guildMember.IsDefined(out var member))
+        var memberResult = await _discord.Rest.Guild.GetGuildMemberAsync(guildId, user.ID);
+        if (memberResult.IsDefined(out var member))
             return await _feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(member, _discord.JsonSerializerOptions)}```");
 
-        USER:
+    USER:
         return await _feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(user, _discord.JsonSerializerOptions)}```");
     }
 }

@@ -6,7 +6,6 @@ using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.API.Objects;
-using Remora.Discord.Caching;
 using Remora.Discord.Extensions.Embeds;
 using Remora.Rest.Core;
 using Remora.Results;
@@ -55,7 +54,7 @@ public class GeneralLoggingService
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
 
-        var cacheResult = await _discord.Cache.CacheService.TryGetValueAsync<IMessage>(KeyHelpers.CreateMessageCacheKey(channelId, messageId), cancellationToken);
+        var cacheResult = await _discord.GatewayCache.GetMessageAsync(messageId, channelId, cancellationToken);
         var beforeContent = !cacheResult.IsDefined(out var previousMessage) ? "_Message not in cache!_" :
             string.IsNullOrEmpty(previousMessage.Content) ? "_Message has no content!_" : previousMessage.Content;
         var afterContent = m.Content.IsDefined(out var content) && !string.IsNullOrEmpty(content) ? content : "_Message has no content!_";
@@ -115,7 +114,7 @@ public class GeneralLoggingService
 
         return await SendLogMessageAsync(logging.ChannelId, builder, attachmentsLog, cancellationToken);
 
-        SEND:
+    SEND:
         return await SendLogMessageAsync(logging.ChannelId, builder, cancellationToken: cancellationToken);
     }
 
@@ -134,7 +133,7 @@ public class GeneralLoggingService
         var channelId = m.ChannelID;
         var messageId = m.ID;
 
-        var cacheResult = await _discord.Cache.CacheService.TryGetValueAsync<IMessage>(KeyHelpers.CreateMessageCacheKey(channelId, messageId), cancellationToken);
+        var cacheResult = await _discord.GatewayCache.GetMessageAsync(messageId, channelId, cancellationToken);
         if (!cacheResult.IsDefined(out var cachedMessage))
         {
             builder.AddField("Channel", $"<#{channelId}>", true);
@@ -176,7 +175,7 @@ public class GeneralLoggingService
 
         return await SendLogMessageAsync(logging.ChannelId, builder, attachments, cancellationToken);
 
-        SEND:
+    SEND:
         return await SendLogMessageAsync(logging.ChannelId, builder, cancellationToken: cancellationToken);
     }
 
@@ -242,7 +241,7 @@ public class GeneralLoggingService
                 builder.AddField("Reason", reason, true);
         }
 
-        SEND:
+    SEND:
         return await SendLogMessageAsync(logging.ChannelId, builder, cancellationToken: cancellationToken);
     }
 }
