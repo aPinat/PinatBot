@@ -26,12 +26,7 @@ public class MessageUpdate : IResponder<IMessageUpdate>
         var key = KeyHelpers.CreateMessageCacheKey(channelID, messageID);
 
         if (!_cache.InternalMessages.TryGetValue(messageID.Value, out var cachedMessage))
-        {
-            var cachedMessageDistributed = await _distributedCacheProvider.RetrieveAsync<IMessage>(key, ct);
-            if (cachedMessageDistributed is null)
-                return Result.FromError(new InvalidOperationError("Message is not cached"));
-            cachedMessage = new Message(cachedMessageDistributed.ID, cachedMessageDistributed.ChannelID);
-        }
+            cachedMessage = new Message(messageID, channelID);
 
         cachedMessage.Update(m);
         await _distributedCacheProvider.CacheAsync<IMessage>(key, cachedMessage, ct);
