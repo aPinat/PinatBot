@@ -20,7 +20,7 @@ public class MessageDelete : IResponder<IMessageDelete>
     {
         _cache.InternalMessages.TryRemove(m.ID.Value, out _);
 
-        var key = KeyHelpers.CreateMessageCacheKey(m.ChannelID, m.ID);
+        var key = DistributedCacheProvider.CreateMessageCacheKey(m.ChannelID, m.ID);
         await _distributedCacheProvider.EvictAsync(key, ct);
 
         return Result.FromSuccess();

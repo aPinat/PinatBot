@@ -34,7 +34,7 @@ public class DiscordGatewayCache
         if (InternalMessages.TryGetValue(messageID.Value, out var message))
             return message;
 
-        var key = KeyHelpers.CreateMessageCacheKey(channelID, messageID);
+        var key = DistributedCacheProvider.CreateMessageCacheKey(channelID, messageID);
         var cachedMessageDistributed = await _distributedCacheProvider.RetrieveAsync<IMessage>(key, cancellationToken);
         return cachedMessageDistributed is null ? Result<IMessage>.FromError(new NotFoundError("Message not found in cache")) : Result<IMessage>.FromSuccess(cachedMessageDistributed);
     }
@@ -45,7 +45,7 @@ public class DiscordGatewayCache
         m.Populate(message);
         InternalMessages[message.ID.Value] = m;
 
-        var key = KeyHelpers.CreateMessageCacheKey(message.ChannelID, message.ID);
+        var key = DistributedCacheProvider.CreateMessageCacheKey(message.ChannelID, message.ID);
         await _distributedCacheProvider.CacheAsync<IMessage>(key, m, cancellationToken);
     }
 

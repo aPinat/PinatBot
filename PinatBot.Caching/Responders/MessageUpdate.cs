@@ -23,7 +23,7 @@ public class MessageUpdate : IResponder<IMessageUpdate>
         if (!m.ChannelID.IsDefined(out var channelID) || !m.ID.IsDefined(out var messageID))
             return Result.FromError(new InvalidOperationError("ChannelID or MessageID is not defined"));
 
-        var key = KeyHelpers.CreateMessageCacheKey(channelID, messageID);
+        var key = DistributedCacheProvider.CreateMessageCacheKey(channelID, messageID);
 
         if (!_cache.InternalMessages.TryGetValue(messageID.Value, out var cachedMessage))
             cachedMessage = new Message(messageID, channelID);

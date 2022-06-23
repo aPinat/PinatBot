@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using Remora.Rest.Core;
 
 namespace PinatBot.Caching;
 
@@ -38,4 +39,8 @@ public class DistributedCacheProvider
         await DistributedCache.RemoveAsync(key, ct);
         return JsonSerializer.Deserialize<TInstance>(bytes, JsonSerializerOptions);
     }
+
+    public static string CreateChannelCacheKey(in Snowflake channelID) => $"Channel:{channelID}";
+
+    public static string CreateMessageCacheKey(in Snowflake channelID, in Snowflake messageID) => $"{CreateChannelCacheKey(channelID)}:Message:{messageID}";
 }

@@ -37,10 +37,11 @@ await Host.CreateDefaultBuilder(args)
             .AddDiscordGateway(_ => configuration.Discord.BotToken)
             .Configure<DiscordGatewayClientOptions>(options =>
             {
-                options.Intents = (GatewayIntents)~(-1 << 17);
-                options.Presence = new UpdatePresence(ClientStatus.DND, false, null, new[] { new Activity("#Pinats", ActivityType.Watching) });
+                options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildMembers | GatewayIntents.GuildEmojisAndStickers | GatewayIntents.GuildVoiceStates | GatewayIntents.GuildPresences |
+                                  GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContents;
+                options.Presence = new UpdatePresence(ClientStatus.DND, false, null, new[] { new Activity("#Pinats", ActivityType.Competing) });
             })
-            .AddDiscordMixedCaching(options => options.Configuration = configuration.ConnectionStrings.Redis)
+            .AddPinatBotCaching(options => options.Configuration = configuration.ConnectionStrings.Redis)
             .AddSingleton<Discord>()
             .AddSingleton<GeneralLoggingService>()
             .AddResponder<GeneralLoggingResponder>()

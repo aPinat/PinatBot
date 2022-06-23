@@ -24,7 +24,7 @@ public class MessageCreate : IResponder<IMessageCreate>
         message.Populate(m);
         _cache.InternalMessages[m.ID.Value] = message;
 
-        var key = KeyHelpers.CreateMessageCacheKey(m.ChannelID, m.ID);
+        var key = DistributedCacheProvider.CreateMessageCacheKey(m.ChannelID, m.ID);
         await _distributedCacheProvider.CacheAsync<IMessage>(key, message, ct);
 
         return Result.FromSuccess();

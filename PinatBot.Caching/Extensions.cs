@@ -11,7 +11,7 @@ namespace PinatBot.Caching;
 
 public static class Extensions
 {
-    public static IServiceCollection AddDiscordMixedCaching(this IServiceCollection services, Action<RedisCacheOptions>? redisCacheOptionsAction) =>
+    public static IServiceCollection AddPinatBotCaching(this IServiceCollection services, Action<RedisCacheOptions>? redisCacheOptionsAction) =>
         services
             .AddSingleton<DiscordGatewayCache>()
             .Replace(ServiceDescriptor.Transient<IDiscordRestChannelAPI, CachingDiscordRestChannelAPI>())
@@ -32,6 +32,9 @@ public static class Extensions
             .AddResponder<GuildRoleCreate>(ResponderGroup.Early)
             .AddResponder<GuildRoleDelete>(ResponderGroup.Late)
             .AddResponder<GuildRoleUpdate>(ResponderGroup.Late)
+            .AddResponder<GuildScheduledEventCreate>(ResponderGroup.Early)
+            .AddResponder<GuildScheduledEventDelete>(ResponderGroup.Late)
+            .AddResponder<GuildScheduledEventUpdate>(ResponderGroup.Late)
             .AddResponder<GuildStickersUpdate>(ResponderGroup.Late)
             .AddResponder<GuildUpdate>(ResponderGroup.Late)
             .AddResponder<MessageCreate>(ResponderGroup.Early)
@@ -39,6 +42,12 @@ public static class Extensions
             .AddResponder<MessageUpdate>(ResponderGroup.Late)
             .AddResponder<PresenceUpdate>(ResponderGroup.Late)
             .AddResponder<Ready>(ResponderGroup.Early)
+            .AddResponder<StageInstanceCreate>(ResponderGroup.Early)
+            .AddResponder<StageInstanceDelete>(ResponderGroup.Late)
+            .AddResponder<StageInstanceUpdate>(ResponderGroup.Late)
+            .AddResponder<ThreadCreate>(ResponderGroup.Early)
+            .AddResponder<ThreadListSync>(ResponderGroup.Early)
+            .AddResponder<ThreadUpdate>(ResponderGroup.Late)
             .AddResponder<UserUpdate>(ResponderGroup.Late)
             .AddResponder<VoiceStateUpdate>(ResponderGroup.Late);
 }
