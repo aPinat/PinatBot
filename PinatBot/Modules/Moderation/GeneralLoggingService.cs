@@ -85,7 +85,6 @@ public class GeneralLoggingService
 
         builder.AddField("Author", author.Mention(), true);
         builder.AddField("Channel", $"<#{channelId}>", true);
-        builder.AddField("Thread", m.Thread.IsDefined(out var thread) ? $"<#{thread.ID}>" : "None", true);
         builder.AddField("Message ID", $"[{messageId}]({m.Link(guildId, channelId, messageId)})");
 
         if (previousMessage is null)
@@ -155,7 +154,6 @@ public class GeneralLoggingService
             builder.Description = $"**Original Message**\n{beforeContent}";
         builder.AddField("Author", cachedMessage.Author.Mention(), true);
         builder.AddField("Channel", $"<#{channelId}>", true);
-        builder.AddField("Thread", cachedMessage.Thread.IsDefined(out var thread) ? $"<#{thread.ID}>" : "None", true);
         builder.AddField("Message ID", $"[{messageId}]({cachedMessage.Link(guildId, channelId, messageId)})");
         builder.AddField("Embeds", cachedMessage.Embeds.Count.ToString(), true);
         builder.AddField("Attachments", cachedMessage.Attachments.Count.ToString(), true);
