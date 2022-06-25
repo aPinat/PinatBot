@@ -1,7 +1,6 @@
 ﻿using PinatBot.Caching.Objects;
 using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.Caching;
 using Remora.Discord.Gateway.Responders;
 using Remora.Results;
 

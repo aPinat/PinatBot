@@ -1,41 +1,35 @@
-using System.Text.Json;
-using Microsoft.Extensions.Options;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.Caching.Abstractions.Services;
-using Remora.Discord.Rest.API;
+using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest;
 using Remora.Rest.Core;
 using Remora.Results;
 
 namespace PinatBot.Caching.API;
 
-/// <inheritdoc />
-public class CachingDiscordRestChannelAPI : DiscordRestChannelAPI
+public partial class CachingDiscordRestChannelAPI : IDiscordRestChannelAPI, IRestCustomizable
 {
+    private readonly IDiscordRestChannelAPI _actual;
     private readonly DiscordGatewayCache _gatewayCache;
 
-    public CachingDiscordRestChannelAPI(IRestHttpClient restHttpClient, IOptionsMonitor<JsonSerializerOptions> jsonOptions, ICacheProvider rateLimitCache, DiscordGatewayCache gatewayCache) :
-        base(restHttpClient, jsonOptions.Get("Discord"), rateLimitCache) => _gatewayCache = gatewayCache;
-
-    /// <inheritdoc />
-    public override async Task<Result<IChannel>> GetChannelAsync(Snowflake channelID, CancellationToken ct = default)
+    public CachingDiscordRestChannelAPI(IDiscordRestChannelAPI actual, DiscordGatewayCache gatewayCache)
     {
-        var cacheResult = _gatewayCache.GetChannel(channelID);
-        if (cacheResult.IsSuccess)
-            return Result<IChannel>.FromSuccess(cacheResult.Entity);
-
-        var getChannel = await base.GetChannelAsync(channelID, ct);
-        return getChannel;
+        _actual = actual;
+        _gatewayCache = gatewayCache;
     }
 
-    /// <inheritdoc />
-    public override async Task<Result<IMessage>> GetChannelMessageAsync(Snowflake channelID, Snowflake messageID, CancellationToken ct = default)
+    public Task<Result<IChannel>> GetChannelAsync(Snowflake channelID, CancellationToken ct = default)
+    {
+        var cacheResult = _gatewayCache.GetChannel(channelID);
+        return cacheResult.IsSuccess ? Task.FromResult(Result<IChannel>.FromSuccess(cacheResult.Entity)) : _actual.GetChannelAsync(channelID, ct);
+    }
+
+    public async Task<Result<IMessage>> GetChannelMessageAsync(Snowflake channelID, Snowflake messageID, CancellationToken ct = default)
     {
         var cacheResult = await _gatewayCache.GetMessageAsync(messageID, channelID, ct);
         if (cacheResult.IsSuccess)
             return Result<IMessage>.FromSuccess(cacheResult.Entity);
 
-        var getMessage = await base.GetChannelMessageAsync(channelID, messageID, ct);
+        var getMessage = await _actual.GetChannelMessageAsync(channelID, messageID, ct);
         if (!getMessage.IsSuccess)
             return getMessage;
 
@@ -44,15 +38,14 @@ public class CachingDiscordRestChannelAPI : DiscordRestChannelAPI
         return getMessage;
     }
 
-    /// <inheritdoc />
-    public override async Task<Result<IReadOnlyList<IMessage>>> GetChannelMessagesAsync(Snowflake channelID,
+    public async Task<Result<IReadOnlyList<IMessage>>> GetChannelMessagesAsync(Snowflake channelID,
         Optional<Snowflake> around = default,
         Optional<Snowflake> before = default,
         Optional<Snowflake> after = default,
         Optional<int> limit = default,
         CancellationToken ct = default)
     {
-        var getResult = await base.GetChannelMessagesAsync(channelID, around, before, after, limit, ct);
+        var getResult = await _actual.GetChannelMessagesAsync(channelID, around, before, after, limit, ct);
         if (!getResult.IsSuccess)
             return getResult;
 

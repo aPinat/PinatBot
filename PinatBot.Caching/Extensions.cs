@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using PinatBot.Caching.API;
 using PinatBot.Caching.Responders;
 using Remora.Discord.API.Abstractions.Rest;
 using Remora.Discord.Gateway.Extensions;
 using Remora.Discord.Gateway.Responders;
+using Remora.Discord.Rest.Extensions;
 
 namespace PinatBot.Caching;
 
@@ -14,9 +14,11 @@ public static class Extensions
     public static IServiceCollection AddPinatBotCaching(this IServiceCollection services, Action<RedisCacheOptions>? redisCacheOptionsAction) =>
         services
             .AddSingleton<DiscordGatewayCache>()
-            .Replace(ServiceDescriptor.Transient<IDiscordRestChannelAPI, CachingDiscordRestChannelAPI>())
-            .Replace(ServiceDescriptor.Transient<IDiscordRestGuildAPI, CachingDiscordRestGuildAPI>())
-            .Replace(ServiceDescriptor.Transient<IDiscordRestUserAPI, CachingDiscordRestUserAPI>())
+            .Decorate<IDiscordRestChannelAPI, CachingDiscordRestChannelAPI>()
+            .Decorate<IDiscordRestEmojiAPI, CachingDiscordRestEmojiAPI>()
+            .Decorate<IDiscordRestGuildAPI, CachingDiscordRestGuildAPI>()
+            .Decorate<IDiscordRestStickerAPI, CachingDiscordRestStickerAPI>()
+            .Decorate<IDiscordRestUserAPI, CachingDiscordRestUserAPI>()
             .AddStackExchangeRedisCache(redisCacheOptionsAction)
             .AddSingleton<DistributedCacheProvider>()
             .AddResponder<ChannelCreate>(ResponderGroup.Early)

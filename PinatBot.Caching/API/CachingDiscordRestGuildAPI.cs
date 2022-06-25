@@ -1,50 +1,41 @@
-using System.Text.Json;
-using Microsoft.Extensions.Options;
 using Remora.Discord.API.Abstractions.Objects;
-using Remora.Discord.Caching.Abstractions.Services;
-using Remora.Discord.Rest.API;
+using Remora.Discord.API.Abstractions.Rest;
 using Remora.Rest;
 using Remora.Rest.Core;
 using Remora.Results;
 
 namespace PinatBot.Caching.API;
 
-/// <inheritdoc />
-public class CachingDiscordRestGuildAPI : DiscordRestGuildAPI
+public partial class CachingDiscordRestGuildAPI : IDiscordRestGuildAPI, IRestCustomizable
 {
+    private readonly IDiscordRestGuildAPI _actual;
     private readonly DiscordGatewayCache _gatewayCache;
 
-    public CachingDiscordRestGuildAPI(IRestHttpClient restHttpClient, IOptionsMonitor<JsonSerializerOptions> jsonOptions, ICacheProvider rateLimitCache, DiscordGatewayCache gatewayCache) :
-        base(restHttpClient, jsonOptions.Get("Discord"), rateLimitCache) => _gatewayCache = gatewayCache;
+    public CachingDiscordRestGuildAPI(IDiscordRestGuildAPI actual, DiscordGatewayCache gatewayCache)
+    {
+        _actual = actual;
+        _gatewayCache = gatewayCache;
+    }
 
-    /// <inheritdoc />
-    public override async Task<Result<IGuild>> GetGuildAsync(Snowflake guildID, Optional<bool> withCounts = default, CancellationToken ct = default)
+    public Task<Result<IGuild>> GetGuildAsync(Snowflake guildID, Optional<bool> withCounts = default, CancellationToken ct = default)
     {
         var cacheResult = _gatewayCache.GetGuild(guildID);
-        if (cacheResult.IsSuccess)
-            return Result<IGuild>.FromSuccess(cacheResult.Entity);
-
-        return await base.GetGuildAsync(guildID, withCounts, ct);
+        return cacheResult.IsSuccess ? Task.FromResult(Result<IGuild>.FromSuccess(cacheResult.Entity)) : _actual.GetGuildAsync(guildID, withCounts, ct);
     }
 
-    /// <inheritdoc />
-    public override async Task<Result<IReadOnlyList<IChannel>>> GetGuildChannelsAsync(Snowflake guildID, CancellationToken ct = default)
+    public Task<Result<IReadOnlyList<IChannel>>> GetGuildChannelsAsync(Snowflake guildID, CancellationToken ct = default)
     {
         var cacheResult = _gatewayCache.GetGuildChannels(guildID);
-        if (cacheResult.IsSuccess)
-            return Result<IReadOnlyList<IChannel>>.FromSuccess(cacheResult.Entity);
-
-        return await base.GetGuildChannelsAsync(guildID, ct);
+        return cacheResult.IsSuccess ? Task.FromResult(Result<IReadOnlyList<IChannel>>.FromSuccess(cacheResult.Entity)) : _actual.GetGuildChannelsAsync(guildID, ct);
     }
 
-    /// <inheritdoc />
-    public override async Task<Result<IGuildMember>> GetGuildMemberAsync(Snowflake guildID, Snowflake userID, CancellationToken ct = default)
+    public async Task<Result<IGuildMember>> GetGuildMemberAsync(Snowflake guildID, Snowflake userID, CancellationToken ct = default)
     {
         var cacheResult = _gatewayCache.GetGuildMember(guildID, userID);
         if (cacheResult.IsSuccess)
             return Result<IGuildMember>.FromSuccess(cacheResult.Entity);
 
-        var getResult = await base.GetGuildMemberAsync(guildID, userID, ct);
+        var getResult = await _actual.GetGuildMemberAsync(guildID, userID, ct);
         if (!getResult.IsSuccess)
             return getResult;
 
@@ -58,13 +49,12 @@ public class CachingDiscordRestGuildAPI : DiscordRestGuildAPI
         return getResult;
     }
 
-    /// <inheritdoc />
-    public override async Task<Result<IReadOnlyList<IGuildMember>>> ListGuildMembersAsync(Snowflake guildID,
+    public async Task<Result<IReadOnlyList<IGuildMember>>> ListGuildMembersAsync(Snowflake guildID,
         Optional<int> limit = default,
         Optional<Snowflake> after = default,
         CancellationToken ct = default)
     {
-        var getResult = await base.ListGuildMembersAsync(guildID, limit, after, ct);
+        var getResult = await _actual.ListGuildMembersAsync(guildID, limit, after, ct);
         if (!getResult.IsSuccess)
             return getResult;
 
@@ -80,10 +70,9 @@ public class CachingDiscordRestGuildAPI : DiscordRestGuildAPI
         return getResult;
     }
 
-    /// <inheritdoc />
-    public override async Task<Result<IReadOnlyList<IGuildMember>>> SearchGuildMembersAsync(Snowflake guildID, string query, Optional<int> limit = default, CancellationToken ct = default)
+    public async Task<Result<IReadOnlyList<IGuildMember>>> SearchGuildMembersAsync(Snowflake guildID, string query, Optional<int> limit = default, CancellationToken ct = default)
     {
-        var result = await base.SearchGuildMembersAsync(guildID, query, limit, ct);
+        var result = await _actual.SearchGuildMembersAsync(guildID, query, limit, ct);
         if (!result.IsSuccess)
             return result;
 
@@ -99,13 +88,9 @@ public class CachingDiscordRestGuildAPI : DiscordRestGuildAPI
         return result;
     }
 
-    /// <inheritdoc />
-    public override async Task<Result<IReadOnlyList<IRole>>> GetGuildRolesAsync(Snowflake guildID, CancellationToken ct = default)
+    public Task<Result<IReadOnlyList<IRole>>> GetGuildRolesAsync(Snowflake guildID, CancellationToken ct = default)
     {
         var cacheResult = _gatewayCache.GetGuildRoles(guildID);
-        if (cacheResult.IsSuccess)
-            return Result<IReadOnlyList<IRole>>.FromSuccess(cacheResult.Entity);
-
-        return await base.GetGuildRolesAsync(guildID, ct);
+        return cacheResult.IsSuccess ? Task.FromResult(Result<IReadOnlyList<IRole>>.FromSuccess(cacheResult.Entity)) : _actual.GetGuildRolesAsync(guildID, ct);
     }
 }

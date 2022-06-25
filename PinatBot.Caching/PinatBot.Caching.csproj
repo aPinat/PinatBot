@@ -8,8 +8,25 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.6" />
-    <PackageReference Include="Remora.Discord.API.Abstractions" Version="66.0.1" />
     <PackageReference Include="Remora.Discord.Gateway" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="API\CachingDiscordRestChannelAPI.Delegations.cs">
+      <DependentUpon>CachingDiscordRestChannelAPI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="API\CachingDiscordRestEmojiAPI.Delegations.cs">
+      <DependentUpon>CachingDiscordRestEmojiAPI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="API\CachingDiscordRestGuildAPI.Delegations.cs">
+      <DependentUpon>CachingDiscordRestGuildAPI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="API\CachingDiscordRestStickerAPI.Delegations.cs">
+      <DependentUpon>CachingDiscordRestStickerAPI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="API\CachingDiscordRestUserAPI.Delegations.cs">
+      <DependentUpon>CachingDiscordRestUserAPI.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

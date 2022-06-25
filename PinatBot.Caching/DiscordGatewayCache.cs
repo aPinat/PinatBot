@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Objects;
-using Remora.Discord.Caching;
 using Remora.Rest.Core;
 using Remora.Results;
 using Guild = PinatBot.Caching.Objects.Guild;
@@ -22,7 +21,17 @@ public class DiscordGatewayCache
 
     public DiscordGatewayCache(DistributedCacheProvider distributedCacheProvider) => _distributedCacheProvider = distributedCacheProvider;
 
-    public IUser? CurrentUser { get; internal set; }
+    internal IUser? CurrentUser { get; set; }
+
+    public Result<IUser> GetCurrentUser() =>
+        CurrentUser is not null
+            ? Result<IUser>.FromSuccess(CurrentUser)
+            : Result<IUser>.FromError(new NotFoundError("CurrentUser is not cached"));
+
+    public Result<IUser> GetUser(Snowflake userID) =>
+        InternalUsers.TryGetValue(userID.Value, out var user)
+            ? Result<IUser>.FromSuccess(user)
+            : Result<IUser>.FromError(new NotFoundError("User not found in cache"));
 
     public Result<IGuild> GetGuild(Snowflake guildID) =>
         InternalGuilds.TryGetValue(guildID.Value, out var guild)
@@ -63,11 +72,10 @@ public class DiscordGatewayCache
     {
         foreach (var guild in InternalGuilds.Values)
             if (guild.ChannelsInternal.TryGetValue(channelID.Value, out var channel))
-            {
-                var value = channel as Channel;
-
-                return Result<IChannel>.FromSuccess(channel);
-            }
+                if (channel is Channel channelRecord)
+                    return Result<IChannel>.FromSuccess(channelRecord with { GuildID = guild.ID });
+                else
+                    return Result<IChannel>.FromSuccess(channel);
 
         return Result<IChannel>.FromError(new NotFoundError("Channel not found in cache"));
     }
