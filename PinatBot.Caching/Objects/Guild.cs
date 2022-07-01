@@ -92,34 +92,34 @@ public class Guild : IGuildCreate
 
     public bool IsPremiumProgressBarEnabled { get; private set; }
 
-    public Optional<DateTimeOffset> JoinedAt { get; private set; }
+    public DateTimeOffset JoinedAt { get; private set; }
 
-    public Optional<bool> IsLarge { get; private set; }
+    public bool IsLarge { get; private set; }
 
     public Optional<bool> IsUnavailable { get; internal set; }
 
-    public Optional<int> MemberCount { get; internal set; }
+    public int MemberCount { get; internal set; }
 
     internal readonly ConcurrentDictionary<ulong, IPartialVoiceState> VoiceStatesInternal = new();
-    public Optional<IReadOnlyList<IPartialVoiceState>> VoiceStates => VoiceStatesInternal.Values.ToImmutableList();
+    public IReadOnlyList<IPartialVoiceState> VoiceStates => VoiceStatesInternal.Values.ToImmutableList();
 
     internal readonly ConcurrentDictionary<ulong, IGuildMember> MembersInternal = new();
-    public Optional<IReadOnlyList<IGuildMember>> Members => MembersInternal.Values.ToImmutableList();
+    public IReadOnlyList<IGuildMember> Members => MembersInternal.Values.ToImmutableList();
 
     internal readonly ConcurrentDictionary<ulong, IChannel> ChannelsInternal = new();
-    public Optional<IReadOnlyList<IChannel>> Channels => ChannelsInternal.Values.ToImmutableList();
+    public IReadOnlyList<IChannel> Channels => ChannelsInternal.Values.ToImmutableList();
 
     internal readonly ConcurrentDictionary<ulong, IChannel> ThreadsInternal = new();
-    public Optional<IReadOnlyList<IChannel>> Threads => ThreadsInternal.Values.ToImmutableList();
+    public IReadOnlyList<IChannel> Threads => ThreadsInternal.Values.ToImmutableList();
 
     internal readonly ConcurrentDictionary<ulong, IPartialPresence> PresencesInternal = new();
-    public Optional<IReadOnlyList<IPartialPresence>> Presences => PresencesInternal.Values.ToImmutableList();
+    public IReadOnlyList<IPartialPresence> Presences => PresencesInternal.Values.ToImmutableList();
 
     internal readonly ConcurrentDictionary<ulong, IStageInstance> StageInstancesInternal = new();
-    public Optional<IReadOnlyList<IStageInstance>> StageInstances => StageInstancesInternal.Values.ToImmutableList();
+    public IReadOnlyList<IStageInstance> StageInstances => StageInstancesInternal.Values.ToImmutableList();
 
     internal readonly ConcurrentDictionary<ulong, IGuildScheduledEvent> GuildScheduledEventsInternal = new();
-    public Optional<IReadOnlyList<IGuildScheduledEvent>> GuildScheduledEvents => GuildScheduledEventsInternal.Values.ToImmutableList();
+    public IReadOnlyList<IGuildScheduledEvent> GuildScheduledEvents => GuildScheduledEventsInternal.Values.ToImmutableList();
 
     internal void Populate(IGuildCreate g)
     {
@@ -184,42 +184,35 @@ public class Guild : IGuildCreate
         MemberCount = g.MemberCount;
 
         VoiceStatesInternal.Clear();
-        if (g.VoiceStates.IsDefined(out var voiceStates))
-            foreach (var voiceState in voiceStates)
-                if (voiceState.UserID.IsDefined(out var userID))
-                    VoiceStatesInternal[userID.Value] = voiceState;
+        foreach (var voiceState in g.VoiceStates)
+            if (voiceState.UserID.IsDefined(out var userID))
+                VoiceStatesInternal[userID.Value] = voiceState;
 
         MembersInternal.Clear();
-        if (g.Members.IsDefined(out var members))
-            foreach (var member in members)
-                if (member.User.IsDefined(out var user))
-                    MembersInternal[user.ID.Value] = member;
+        foreach (var member in g.Members)
+            if (member.User.IsDefined(out var user))
+                MembersInternal[user.ID.Value] = member;
 
         ChannelsInternal.Clear();
-        if (g.Channels.IsDefined(out var channels))
-            foreach (var channel in channels)
-                ChannelsInternal[channel.ID.Value] = (channel as Channel ?? throw new InvalidCastException()) with { GuildID = ID };
+        foreach (var channel in g.Channels)
+            ChannelsInternal[channel.ID.Value] = (channel as Channel ?? throw new InvalidCastException()) with { GuildID = ID };
 
         ThreadsInternal.Clear();
-        if (g.Threads.IsDefined(out var threads))
-            foreach (var thread in threads)
-                ThreadsInternal[thread.ID.Value] = (thread as Channel ?? throw new InvalidCastException()) with { GuildID = ID };
+        foreach (var thread in g.Threads)
+            ThreadsInternal[thread.ID.Value] = (thread as Channel ?? throw new InvalidCastException()) with { GuildID = ID };
 
         PresencesInternal.Clear();
-        if (g.Presences.IsDefined(out var presences))
-            foreach (var presence in presences)
-                if (presence.User.IsDefined(out var user) && user.ID.IsDefined(out var userID))
-                    PresencesInternal[userID.Value] = presence;
+        foreach (var presence in g.Presences)
+            if (presence.User.IsDefined(out var user) && user.ID.IsDefined(out var userID))
+                PresencesInternal[userID.Value] = presence;
 
         StageInstancesInternal.Clear();
-        if (g.StageInstances.IsDefined(out var stageInstances))
-            foreach (var stageInstance in stageInstances)
-                StageInstancesInternal[stageInstance.ID.Value] = stageInstance;
+        foreach (var stageInstance in g.StageInstances)
+            StageInstancesInternal[stageInstance.ID.Value] = stageInstance;
 
         GuildScheduledEventsInternal.Clear();
-        if (g.GuildScheduledEvents.IsDefined(out var guildScheduledEvents))
-            foreach (var guildScheduledEvent in guildScheduledEvents)
-                GuildScheduledEventsInternal[guildScheduledEvent.ID.Value] = guildScheduledEvent;
+        foreach (var guildScheduledEvent in g.GuildScheduledEvents)
+            GuildScheduledEventsInternal[guildScheduledEvent.ID.Value] = guildScheduledEvent;
     }
 
     internal void Update(IGuildUpdate g)

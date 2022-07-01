@@ -15,8 +15,7 @@ public class GuildMemberRemove : IResponder<IGuildMemberRemove>
         _cache.InternalGuilds[m.GuildID.Value].MembersInternal.TryRemove(m.User.ID.Value, out _);
         _cache.InternalUsers[m.User.ID.Value] = m.User;
 
-        if (_cache.InternalGuilds[m.GuildID.Value].MemberCount.HasValue)
-            _cache.InternalGuilds[m.GuildID.Value].MemberCount = _cache.InternalGuilds[m.GuildID.Value].MemberCount.Value - 1;
+        _cache.InternalGuilds[m.GuildID.Value].MemberCount--;
 
         return Task.FromResult(Result.FromSuccess());
     }

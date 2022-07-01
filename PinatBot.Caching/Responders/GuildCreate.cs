@@ -36,10 +36,9 @@ public class GuildCreate : IResponder<IGuildCreate>
             _logger.LogInformation("Guild joined: {GuildName} ({GuildId})", gc.Name, gc.ID);
         }
 
-        if (gc.Members.IsDefined(out var members))
-            foreach (var member in members)
-                if (member.User.IsDefined(out var user))
-                    _cache.InternalUsers[user.ID.Value] = user;
+        foreach (var member in gc.Members)
+            if (member.User.IsDefined(out var user))
+                _cache.InternalUsers[user.ID.Value] = user;
 
         return Task.FromResult(Result.FromSuccess());
     }

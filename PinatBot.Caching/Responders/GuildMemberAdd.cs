@@ -18,8 +18,7 @@ public class GuildMemberAdd : IResponder<IGuildMemberAdd>
         _cache.InternalGuilds[m.GuildID.Value].MembersInternal[user.ID.Value] = m;
         _cache.InternalUsers[user.ID.Value] = user;
 
-        if (_cache.InternalGuilds[m.GuildID.Value].MemberCount.HasValue)
-            _cache.InternalGuilds[m.GuildID.Value].MemberCount = _cache.InternalGuilds[m.GuildID.Value].MemberCount.Value + 1;
+        _cache.InternalGuilds[m.GuildID.Value].MemberCount++;
 
         return Task.FromResult(Result.FromSuccess());
     }
