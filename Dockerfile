@@ -1,7 +1,7 @@
 ﻿FROM mcr.microsoft.com/dotnet/runtime:6.0.4 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0.301 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0.302 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore
