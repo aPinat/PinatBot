@@ -1,17 +1,22 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:6.0.4 AS base
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/sdk:6.0.302 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0.302 AS build
 WORKDIR /src
-COPY . .
+
+COPY ["*.sln", "."]
+COPY ["PinatBot/PinatBot.csproj", "PinatBot/"]
+COPY ["PinatBot.Caching/PinatBot.Caching.csproj", "PinatBot.Caching/"]
+COPY ["PinatBot.Data/PinatBot.Data.csproj", "PinatBot.Data/"]
 RUN dotnet restore
+
+COPY ["PinatBot/", "PinatBot/"]
+COPY ["PinatBot.Caching/", "PinatBot.Caching/"]
+COPY ["PinatBot.Data/", "PinatBot.Data/"]
 WORKDIR "/src/PinatBot"
-RUN dotnet build "PinatBot.csproj" -c Release -o /app/build
+RUN dotnet build -c Release --no-restore
 
 FROM build AS publish
-RUN dotnet publish "PinatBot.csproj" -c Release -o /app/publish
+RUN dotnet publish -c Release --no-build -o /app
 
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/runtime:6.0.7
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "PinatBot.dll"]
