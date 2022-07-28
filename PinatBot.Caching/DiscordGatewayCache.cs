@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using Remora.Discord.API.Abstractions.Gateway.Events;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.API.Objects;
 using Remora.Rest.Core;
@@ -33,10 +34,10 @@ public class DiscordGatewayCache
             ? Result<IUser>.FromSuccess(user)
             : Result<IUser>.FromError(new NotFoundError("User not found in cache"));
 
-    public Result<IGuild> GetGuild(Snowflake guildID) =>
+    public Result<IGuildCreate> GetGuild(Snowflake guildID) =>
         InternalGuilds.TryGetValue(guildID.Value, out var guild)
-            ? Result<IGuild>.FromSuccess(guild)
-            : Result<IGuild>.FromError(new NotFoundError("Guild not found in cache"));
+            ? Result<IGuildCreate>.FromSuccess(guild)
+            : Result<IGuildCreate>.FromError(new NotFoundError("Guild not found in cache"));
 
     public async Task<Result<IMessage>> GetMessageAsync(Snowflake messageID, Snowflake channelID, CancellationToken cancellationToken = default)
     {

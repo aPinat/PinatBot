@@ -72,6 +72,8 @@ public class Message : IMessageCreate
 
     public Optional<IReadOnlyList<IStickerItem>> StickerItems { get; private set; }
 
+    public Optional<int> Position { get; private set; }
+
     internal void Populate(IMessageCreate m)
     {
         if (m.ID != ID)
@@ -108,6 +110,7 @@ public class Message : IMessageCreate
         Thread = m.Thread;
         Components = m.Components;
         StickerItems = m.StickerItems;
+        Position = m.Position;
     }
 
     internal void Populate(IMessage m)
@@ -143,6 +146,7 @@ public class Message : IMessageCreate
         Thread = m.Thread;
         Components = m.Components;
         StickerItems = m.StickerItems;
+        Position = m.Position;
     }
 
     internal void Update(IMessageUpdate m)
@@ -235,6 +239,9 @@ public class Message : IMessageCreate
             Components = new Optional<IReadOnlyList<IMessageComponent>>(components);
 
         if (m.StickerItems.IsDefined(out var stickerItems))
-            StickerItems = new Optional<IReadOnlyList<IStickerItem>>(stickerItems);
+            StickerItems = new Optional<IReadOnlyList<IStickerItem>>();
+
+        if (m.Position.IsDefined(out var position))
+            Position = position;
     }
 }
