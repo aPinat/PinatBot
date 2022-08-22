@@ -154,8 +154,11 @@ public partial class CachingDiscordRestGuildAPI
         CancellationToken ct = default) =>
         _actual.ModifyGuildRoleAsync(guildID, roleID, name, permissions, color, isHoisted, icon, unicodeEmoji, isMentionable, reason, ct);
 
-    public Task<Result<MultiFactorAuthenticationLevel>> ModifyGuildMFALevelAsync(Snowflake guildID, MultiFactorAuthenticationLevel level, CancellationToken ct = default) =>
-        _actual.ModifyGuildMFALevelAsync(guildID, level, ct);
+    public Task<Result<MultiFactorAuthenticationLevel>> ModifyGuildMFALevelAsync(Snowflake guildID,
+        MultiFactorAuthenticationLevel level,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.ModifyGuildMFALevelAsync(guildID, level, reason, ct);
 
     public Task<Result> DeleteGuildRoleAsync(Snowflake guildID, Snowflake roleID, Optional<string> reason = default, CancellationToken ct = default) =>
         _actual.DeleteGuildRoleAsync(guildID, roleID, reason, ct);
