@@ -217,7 +217,11 @@ public partial class CachingDiscordRestGuildAPI
         CancellationToken ct = default) =>
         _actual.ModifyCurrentUserVoiceStateAsync(guildID, channelID, suppress, requestToSpeakTimestamp, ct);
 
-    public Task<Result<IVoiceState>> ModifyUserVoiceStateAsync(Snowflake guildID, Snowflake userID, Snowflake channelID, Optional<bool> suppress = default, CancellationToken ct = default) =>
+    public Task<Result<IVoiceState>> ModifyUserVoiceStateAsync(Snowflake guildID,
+        Snowflake userID,
+        Snowflake? channelID = default,
+        Optional<bool> suppress = default,
+        CancellationToken ct = default) =>
         _actual.ModifyUserVoiceStateAsync(guildID, userID, channelID, suppress, ct);
 
     public RestRequestCustomization WithCustomization(Action<RestRequestBuilder> requestCustomizer)

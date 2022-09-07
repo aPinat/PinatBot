@@ -75,7 +75,7 @@ public partial class CachingDiscordRestChannelAPI
         CancellationToken ct = default) =>
         _actual.ModifyGuildStageChannelAsync(channelID, name, position, bitrate, permissionOverwrites, rtcRegion, reason, ct);
 
-    public Task<Result<IChannel>> ModifyGuildNewsChannelAsync(Snowflake channelID,
+    public Task<Result<IChannel>> ModifyGuildAnnouncementChannelAsync(Snowflake channelID,
         Optional<string> name = default,
         Optional<ChannelType> type = default,
         Optional<int?> position = default,
@@ -86,7 +86,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildNewsChannelAsync(channelID, name, type, position, topic, isNsfw, permissionOverwrites, parentID, defaultAutoArchiveDuration, reason, ct);
+        _actual.ModifyGuildAnnouncementChannelAsync(channelID, name, type, position, topic, isNsfw, permissionOverwrites, parentID, defaultAutoArchiveDuration, reason, ct);
 
     public Task<Result<IChannel>> ModifyThreadChannelAsync(Snowflake channelID,
         Optional<string> name = default,
@@ -181,8 +181,8 @@ public partial class CachingDiscordRestChannelAPI
     public Task<Result> DeleteChannelPermissionAsync(Snowflake channelID, Snowflake overwriteID, Optional<string> reason = default, CancellationToken ct = default) =>
         _actual.DeleteChannelPermissionAsync(channelID, overwriteID, reason, ct);
 
-    public Task<Result<IFollowedChannel>> FollowNewsChannelAsync(Snowflake channelID, Snowflake webhookChannelID, CancellationToken ct = default) =>
-        _actual.FollowNewsChannelAsync(channelID, webhookChannelID, ct);
+    public Task<Result<IFollowedChannel>> FollowAnnouncementChannelAsync(Snowflake channelID, Snowflake webhookChannelID, CancellationToken ct = default) =>
+        _actual.FollowAnnouncementChannelAsync(channelID, webhookChannelID, ct);
 
     public Task<Result> TriggerTypingIndicatorAsync(Snowflake channelID, CancellationToken ct = default) => _actual.TriggerTypingIndicatorAsync(channelID, ct);
 
