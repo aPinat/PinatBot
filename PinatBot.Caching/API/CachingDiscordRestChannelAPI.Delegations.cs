@@ -29,10 +29,16 @@ public partial class CachingDiscordRestChannelAPI
         Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
         Optional<string?> rtcRegion = default,
         Optional<ChannelFlags> flags = default,
+        Optional<IReadOnlyList<IPartialForumTag>> availableTags = default,
+        Optional<IDefaultReaction?> defaultReactionEmoji = default,
+        Optional<int> defaultThreadRateLimitPerUser = default,
+        Optional<IReadOnlyList<Snowflake>> appliedTags = default,
+        Optional<SortOrder> defaultSortOrder = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
         _actual.ModifyChannelAsync(channelID, name, icon, type, position, topic, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, videoQualityMode, isArchived,
-            autoArchiveDuration, isLocked, isInvitable, defaultAutoArchiveDuration, rtcRegion, flags, reason, ct);
+            autoArchiveDuration, isLocked, isInvitable, defaultAutoArchiveDuration, rtcRegion, flags, availableTags, defaultReactionEmoji, defaultThreadRateLimitPerUser, appliedTags, defaultSortOrder,
+            reason, ct);
 
     public Task<Result<IChannel>> ModifyGroupDMChannelAsync(Snowflake channelID, Optional<string> name = default, Optional<Stream> icon = default, CancellationToken ct = default) =>
         _actual.ModifyGroupDMChannelAsync(channelID, name, icon, ct);
@@ -96,9 +102,29 @@ public partial class CachingDiscordRestChannelAPI
         Optional<bool> isInvitable = default,
         Optional<int?> rateLimitPerUser = default,
         Optional<ChannelFlags> flags = default,
+        Optional<IReadOnlyList<Snowflake>> appliedTags = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyThreadChannelAsync(channelID, name, isArchived, autoArchiveDuration, isLocked, isInvitable, rateLimitPerUser, flags, reason, ct);
+        _actual.ModifyThreadChannelAsync(channelID, name, isArchived, autoArchiveDuration, isLocked, isInvitable, rateLimitPerUser, flags, appliedTags, reason, ct);
+
+    public Task<Result<IChannel>> ModifyForumChannelAsync(Snowflake channelID,
+        Optional<string> name = default,
+        Optional<int?> position = default,
+        Optional<string?> topic = default,
+        Optional<bool?> isNsfw = default,
+        Optional<int?> rateLimitPerUser = default,
+        Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default,
+        Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
+        Optional<ChannelFlags> flags = default,
+        Optional<IReadOnlyList<IPartialForumTag>> availableTags = default,
+        Optional<IDefaultReaction?> defaultReactionEmoji = default,
+        Optional<int> defaultThreadRateLimitPerUser = default,
+        Optional<SortOrder> defaultSortOrder = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.ModifyForumChannelAsync(channelID, name, position, topic, isNsfw, rateLimitPerUser, permissionOverwrites, parentID, defaultAutoArchiveDuration, flags, availableTags,
+            defaultReactionEmoji, defaultThreadRateLimitPerUser, defaultSortOrder, reason, ct);
 
     public Task<Result> DeleteChannelAsync(Snowflake channelID, Optional<string> reason = default, CancellationToken ct = default) => _actual.DeleteChannelAsync(channelID, reason, ct);
 
@@ -199,14 +225,14 @@ public partial class CachingDiscordRestChannelAPI
 
     public Task<Result> GroupDMRemoveRecipientAsync(Snowflake channelID, Snowflake userID, CancellationToken ct = default) => _actual.GroupDMRemoveRecipientAsync(channelID, userID, ct);
 
-    public Task<Result<IChannel>> StartThreadWithMessageAsync(Snowflake channelID,
+    public Task<Result<IChannel>> StartThreadFromMessageAsync(Snowflake channelID,
         Snowflake messageID,
         string name,
         Optional<AutoArchiveDuration> autoArchiveDuration,
         Optional<int?> rateLimitPerUser = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.StartThreadWithMessageAsync(channelID, messageID, name, autoArchiveDuration, rateLimitPerUser, reason, ct);
+        _actual.StartThreadFromMessageAsync(channelID, messageID, name, autoArchiveDuration, rateLimitPerUser, reason, ct);
 
     public Task<Result<IChannel>> StartThreadWithoutMessageAsync(Snowflake channelID,
         string name,
@@ -217,6 +243,21 @@ public partial class CachingDiscordRestChannelAPI
         Optional<string> reason = default,
         CancellationToken ct = default) =>
         _actual.StartThreadWithoutMessageAsync(channelID, name, type, autoArchiveDuration, isInvitable, rateLimitPerUser, reason, ct);
+
+    public Task<Result<IChannel>> StartThreadInForumChannelAsync(Snowflake channelID,
+        string name,
+        Optional<AutoArchiveDuration> autoArchiveDuration = default,
+        Optional<int?> rateLimitPerUser = default,
+        Optional<string> content = default,
+        Optional<IReadOnlyList<IEmbed>> embeds = default,
+        Optional<IAllowedMentions> allowedMentions = default,
+        Optional<IReadOnlyList<IMessageComponent>> components = default,
+        Optional<IReadOnlyList<Snowflake>> stickerIds = default,
+        Optional<IReadOnlyList<FileData>> attachments = default,
+        Optional<MessageFlags> flags = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.StartThreadInForumChannelAsync(channelID, name, autoArchiveDuration, rateLimitPerUser, content, embeds, allowedMentions, components, stickerIds, attachments, flags, reason, ct);
 
     public Task<Result> JoinThreadAsync(Snowflake channelID, CancellationToken ct = default) => _actual.JoinThreadAsync(channelID, ct);
 

@@ -44,12 +44,7 @@ public sealed class PinatBot : BackgroundService
         await using var database = await _dbContextFactory.CreateDbContextAsync(stoppingToken);
         await database.Database.MigrateAsync(stoppingToken);
 
-        var checkSlashSupport = _slashService.SupportsSlashCommands(TreeNameResolver.InteractionCommandTreeName);
-        if (!checkSlashSupport.IsSuccess)
-        {
-            _logger.LogWarning("The registered commands of the bot don't support slash commands: {Reason}", checkSlashSupport.Error?.Message);
-        }
-        else if (isDevelopment && testGuild.HasValue)
+        if (isDevelopment && testGuild.HasValue)
         {
             var updateSlash = await _slashService.UpdateSlashCommandsAsync(new Snowflake(testGuild.Value), TreeNameResolver.InteractionCommandTreeName, stoppingToken);
             if (!updateSlash.IsSuccess)

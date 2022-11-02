@@ -65,10 +65,13 @@ public partial class CachingDiscordRestGuildAPI
         Optional<string?> rtcRegion = default,
         Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
+        Optional<IDefaultReaction?> defaultReactionEmoji = default,
+        Optional<IReadOnlyList<IForumTag>?> availableTags = default,
+        Optional<SortOrder?> defaultSortOrder = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
         _actual.CreateGuildChannelAsync(guildID, name, type, topic, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode,
-            defaultAutoArchiveDuration, reason, ct);
+            defaultAutoArchiveDuration, defaultReactionEmoji, availableTags, defaultSortOrder, reason, ct);
 
     public Task<Result> ModifyGuildChannelPositionsAsync(Snowflake guildID,
         IReadOnlyList<(Snowflake ChannelID, int? Position, bool? LockPermissions, Snowflake? ParentID)> positionModifications,
