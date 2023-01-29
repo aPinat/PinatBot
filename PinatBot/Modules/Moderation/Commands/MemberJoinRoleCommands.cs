@@ -8,6 +8,7 @@ using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Rest.Core;
 using Remora.Results;
@@ -36,11 +37,11 @@ public class MemberJoinRoleCommands : CommandGroup
     [Description("Assign role on member join.")]
     public async Task<IResult> GetJoinRoleAsync()
     {
-        if (!_commandContext.GuildID.IsDefined(out var guildId))
+        if (!_commandContext.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var joinRole = await database.MemberJoinRoleConfigs.AsNoTracking().FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value);
+        var joinRole = await database.MemberJoinRoleConfigs.AsNoTracking().FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value.Value);
         if (joinRole is null)
             return await _feedbackService.SendContextualInfoAsync("No role to assign on member join is set.");
 
@@ -54,14 +55,14 @@ public class MemberJoinRoleCommands : CommandGroup
     [Description("Set role to assign on member join.")]
     public async Task<IResult> SetJoinRoleAsync([Description("Role to assign")] IRole role)
     {
-        if (!_commandContext.GuildID.IsDefined(out var guildId))
+        if (!_commandContext.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var joinRole = await database.MemberJoinRoleConfigs.FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value);
+        var joinRole = await database.MemberJoinRoleConfigs.FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value.Value);
         if (joinRole is null)
         {
-            joinRole = new MemberJoinRoleConfig(guildId.Value) { RoleId = role.ID.Value, Enabled = true };
+            joinRole = new MemberJoinRoleConfig(guildId.Value.Value) { RoleId = role.ID.Value, Enabled = true };
             await database.MemberJoinRoleConfigs.AddAsync(joinRole);
         }
         else
@@ -78,11 +79,11 @@ public class MemberJoinRoleCommands : CommandGroup
     [Description("Disable assigning role on member join.")]
     public async Task<IResult> DisableJoinRoleAsync()
     {
-        if (!_commandContext.GuildID.IsDefined(out var guildId))
+        if (!_commandContext.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var joinRole = await database.MemberJoinRoleConfigs.FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value);
+        var joinRole = await database.MemberJoinRoleConfigs.FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value.Value);
         if (joinRole is null)
             return await _feedbackService.SendContextualErrorAsync("No role to assign on member join set.");
 

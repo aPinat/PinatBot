@@ -7,8 +7,28 @@ using Remora.Rest.Core;
 
 namespace PinatBot.Caching.Objects;
 
-public class Guild : IGuildCreate
+public class Guild : IGuildCreate.IAvailableGuild
 {
+    internal readonly ConcurrentDictionary<ulong, IChannel> ChannelsInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IEmoji> EmojisInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IGuildScheduledEvent> GuildScheduledEventsInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IGuildMember> MembersInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IPartialPresence> PresencesInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IRole> RolesInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IStageInstance> StageInstancesInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, ISticker> StickersInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IChannel> ThreadsInternal = new();
+
+    internal readonly ConcurrentDictionary<ulong, IPartialVoiceState> VoiceStatesInternal = new();
+
     public Guild(Snowflake id) => ID = id;
 
     public Snowflake ID { get; }
@@ -16,6 +36,8 @@ public class Guild : IGuildCreate
     public string Name { get; private set; } = null!;
 
     public IImageHash? Icon { get; private set; }
+
+    public Optional<IImageHash?> IconHash { get; private set; }
 
     public IImageHash? Splash { get; private set; }
 
@@ -37,10 +59,8 @@ public class Guild : IGuildCreate
 
     public ExplicitContentFilterLevel ExplicitContentFilter { get; private set; }
 
-    internal readonly ConcurrentDictionary<ulong, IRole> RolesInternal = new();
     public IReadOnlyList<IRole> Roles => RolesInternal.Values.ToImmutableList();
 
-    internal readonly ConcurrentDictionary<ulong, IEmoji> EmojisInternal = new();
     public IReadOnlyList<IEmoji> Emojis => EmojisInternal.Values.ToImmutableList();
 
     public IReadOnlyList<GuildFeature> GuildFeatures { get; private set; } = null!;
@@ -87,7 +107,6 @@ public class Guild : IGuildCreate
 
     public GuildNSFWLevel NSFWLevel { get; private set; }
 
-    internal readonly ConcurrentDictionary<ulong, ISticker> StickersInternal = new();
     public Optional<IReadOnlyList<ISticker>> Stickers => StickersInternal.Values.ToImmutableList();
 
     public bool IsPremiumProgressBarEnabled { get; private set; }
@@ -100,34 +119,28 @@ public class Guild : IGuildCreate
 
     public int MemberCount { get; internal set; }
 
-    internal readonly ConcurrentDictionary<ulong, IPartialVoiceState> VoiceStatesInternal = new();
     public IReadOnlyList<IPartialVoiceState> VoiceStates => VoiceStatesInternal.Values.ToImmutableList();
 
-    internal readonly ConcurrentDictionary<ulong, IGuildMember> MembersInternal = new();
     public IReadOnlyList<IGuildMember> Members => MembersInternal.Values.ToImmutableList();
 
-    internal readonly ConcurrentDictionary<ulong, IChannel> ChannelsInternal = new();
     public IReadOnlyList<IChannel> Channels => ChannelsInternal.Values.ToImmutableList();
 
-    internal readonly ConcurrentDictionary<ulong, IChannel> ThreadsInternal = new();
     public IReadOnlyList<IChannel> Threads => ThreadsInternal.Values.ToImmutableList();
 
-    internal readonly ConcurrentDictionary<ulong, IPartialPresence> PresencesInternal = new();
     public IReadOnlyList<IPartialPresence> Presences => PresencesInternal.Values.ToImmutableList();
 
-    internal readonly ConcurrentDictionary<ulong, IStageInstance> StageInstancesInternal = new();
     public IReadOnlyList<IStageInstance> StageInstances => StageInstancesInternal.Values.ToImmutableList();
 
-    internal readonly ConcurrentDictionary<ulong, IGuildScheduledEvent> GuildScheduledEventsInternal = new();
     public IReadOnlyList<IGuildScheduledEvent> GuildScheduledEvents => GuildScheduledEventsInternal.Values.ToImmutableList();
 
-    internal void Populate(IGuildCreate g)
+    internal void Populate(IGuildCreate.IAvailableGuild g)
     {
         if (g.ID != ID)
             throw new InvalidOperationException("Guild ID mismatch");
 
         Name = g.Name;
         Icon = g.Icon;
+        IconHash = g.IconHash;
         Splash = g.Splash;
         DiscoverySplash = g.DiscoverySplash;
         IsOwner = g.IsOwner;
@@ -222,6 +235,7 @@ public class Guild : IGuildCreate
 
         Name = g.Name;
         Icon = g.Icon;
+        IconHash = g.IconHash;
         Splash = g.Splash;
         DiscoverySplash = g.DiscoverySplash;
         IsOwner = g.IsOwner;

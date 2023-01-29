@@ -8,6 +8,7 @@ using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Results;
 
@@ -50,11 +51,11 @@ public class LoggingCommands : CommandGroup
     [Description("Show logging channel.")]
     public async Task<IResult> GetLoggingAsync(LoggingType type)
     {
-        if (!_commandContext.GuildID.IsDefined(out var guildId))
+        if (!_commandContext.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
+        var logging = await GetLoggingConfigAsync(type, database, guildId.Value.Value);
         if (logging is null)
             return await _feedbackService.SendContextualInfoAsync($"No {type} logging channel set.");
 
@@ -68,7 +69,7 @@ public class LoggingCommands : CommandGroup
     [Description("Set channel to send logs to.")]
     public async Task<IResult> SetLoggingAsync([Description("General or Voice logging")] LoggingType type, [Description("Channel to log to")] [ChannelTypes(ChannelType.GuildText)] IChannel channel)
     {
-        if (!_commandContext.GuildID.IsDefined(out var guildId))
+        if (!_commandContext.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         if (channel.Type != ChannelType.GuildText)
@@ -78,17 +79,17 @@ public class LoggingCommands : CommandGroup
             return await _feedbackService.SendContextualErrorAsync("Channel must be in this server.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
+        var logging = await GetLoggingConfigAsync(type, database, guildId.Value.Value);
         if (logging is null)
         {
             switch (type)
             {
                 case LoggingType.General:
-                    logging = new GeneralLoggingConfig(guildId.Value) { ChannelId = channel.ID.Value, Enabled = true };
+                    logging = new GeneralLoggingConfig(guildId.Value.Value) { ChannelId = channel.ID.Value, Enabled = true };
                     await database.GeneralLoggingConfigs.AddAsync((GeneralLoggingConfig)logging);
                     break;
                 case LoggingType.Voice:
-                    logging = new VoiceStateLoggingConfig(guildId.Value) { ChannelId = channel.ID.Value, Enabled = true };
+                    logging = new VoiceStateLoggingConfig(guildId.Value.Value) { ChannelId = channel.ID.Value, Enabled = true };
                     await database.VoiceStateLoggingConfigs.AddAsync((VoiceStateLoggingConfig)logging);
                     break;
                 default:
@@ -109,11 +110,11 @@ public class LoggingCommands : CommandGroup
     [Description("Disable logging.")]
     public async Task<IResult> DisableLoggingAsync(LoggingType type)
     {
-        if (!_commandContext.GuildID.IsDefined(out var guildId))
+        if (!_commandContext.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
+        var logging = await GetLoggingConfigAsync(type, database, guildId.Value.Value);
         if (logging is null)
             return await _feedbackService.SendContextualErrorAsync($"No {type} logging channel set.");
 

@@ -4,6 +4,7 @@ using Remora.Commands.Attributes;
 using Remora.Commands.Groups;
 using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Results;
 
@@ -36,13 +37,13 @@ public class GeneralCommands : CommandGroup
     [Description("Get current game for user.")]
     public async Task<IResult> GameAsync([Description("Member to get game for")] IGuildMember member)
     {
-        if (!_context.GuildID.IsDefined(out var guildId))
+        if (!_context.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         if (!member.User.IsDefined(out var memberUser))
             return await _feedbackService.SendContextualErrorAsync("Could not get user.");
 
-        if (!_discord.GatewayCache.GetGuildPresence(guildId, memberUser.ID).IsDefined(out var presence) ||
+        if (!_discord.GatewayCache.GetGuildPresence(guildId.Value, memberUser.ID).IsDefined(out var presence) ||
             !presence.Activities.IsDefined(out var activities))
             return await _feedbackService.SendContextualNeutralAsync($"{member.Mention()} is not currently playing anything.");
 
@@ -56,13 +57,13 @@ public class GeneralCommands : CommandGroup
     [Description("Get presence for user.")]
     public async Task<IResult> PresenceAsync([Description("Member to get presence for")] IGuildMember member)
     {
-        if (!_context.GuildID.IsDefined(out var guildId))
+        if (!_context.TryGetGuildID(out var guildId))
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         if (!member.User.IsDefined(out var memberUser))
             return await _feedbackService.SendContextualErrorAsync("Could not get user.");
 
-        if (!_discord.GatewayCache.GetGuildPresence(guildId, memberUser.ID).IsDefined(out var presence))
+        if (!_discord.GatewayCache.GetGuildPresence(guildId.Value, memberUser.ID).IsDefined(out var presence))
             return await _feedbackService.SendContextualErrorAsync($"Cannot find presence for {member.Mention()}.");
 
         var presenceJson = JsonSerializer.Serialize(presence, _discord.JsonSerializerOptions);
@@ -73,10 +74,10 @@ public class GeneralCommands : CommandGroup
     [Description("Get info for a user.")]
     public async Task<IResult> UserInfoAsync([Description("User to get info for")] IUser user)
     {
-        if (!_context.GuildID.IsDefined(out var guildId))
+        if (!_context.TryGetGuildID(out var guildId))
             goto USER;
 
-        var memberResult = await _discord.Rest.Guild.GetGuildMemberAsync(guildId, user.ID);
+        var memberResult = await _discord.Rest.Guild.GetGuildMemberAsync(guildId.Value, user.ID);
         if (memberResult.IsDefined(out var member))
             return await _feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(member, _discord.JsonSerializerOptions)}```");
 

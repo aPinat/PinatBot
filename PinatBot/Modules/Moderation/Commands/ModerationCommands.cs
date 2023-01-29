@@ -5,6 +5,7 @@ using Remora.Discord.API.Abstractions.Objects;
 using Remora.Discord.Commands.Attributes;
 using Remora.Discord.Commands.Conditions;
 using Remora.Discord.Commands.Contexts;
+using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Feedback.Services;
 using Remora.Results;
 
@@ -31,14 +32,17 @@ public class ModerationCommands : CommandGroup
     [RequireBotDiscordPermissions(DiscordPermission.ManageMessages)]
     public async Task<IResult> PurgeAsync([Description("Number of messages to purge")] int count)
     {
+        if (!_commandContext.TryGetChannelID(out var channelId))
+            return Result.FromError(new InvalidOperationError("Could not get channel."));
+
         await _feedbackService.SendContextualInfoAsync($"Purging {count} messages...");
-        var messagesResult = await _discord.Rest.Channel.GetChannelMessagesAsync(_commandContext.ChannelID, limit: count + 1);
+        var messagesResult = await _discord.Rest.Channel.GetChannelMessagesAsync(channelId.Value, limit: count + 1);
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
 
         if (messages.Count == 1)
-            return await _discord.Rest.Channel.DeleteMessageAsync(_commandContext.ChannelID, messages[0].ID);
+            return await _discord.Rest.Channel.DeleteMessageAsync(channelId.Value, messages[0].ID);
 
-        return await _discord.Rest.Channel.BulkDeleteMessagesAsync(_commandContext.ChannelID, messages.Select(message => message.ID).ToArray());
+        return await _discord.Rest.Channel.BulkDeleteMessagesAsync(channelId.Value, messages.Select(message => message.ID).ToArray());
     }
 }

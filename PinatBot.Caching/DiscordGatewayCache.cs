@@ -34,10 +34,10 @@ public class DiscordGatewayCache
             ? Result<IUser>.FromSuccess(user)
             : Result<IUser>.FromError(new NotFoundError("User not found in cache"));
 
-    public Result<IGuildCreate> GetGuild(Snowflake guildID) =>
+    public Result<IGuildCreate.IAvailableGuild> GetGuild(Snowflake guildID) =>
         InternalGuilds.TryGetValue(guildID.Value, out var guild)
-            ? Result<IGuildCreate>.FromSuccess(guild)
-            : Result<IGuildCreate>.FromError(new NotFoundError("Guild not found in cache"));
+            ? Result<IGuildCreate.IAvailableGuild>.FromSuccess(guild)
+            : Result<IGuildCreate.IAvailableGuild>.FromError(new NotFoundError("Guild not found in cache"));
 
     public async Task<Result<IMessage>> GetMessageAsync(Snowflake messageID, Snowflake channelID, CancellationToken cancellationToken = default)
     {

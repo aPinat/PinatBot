@@ -11,7 +11,7 @@ namespace PinatBot.Caching;
 
 public static class Extensions
 {
-    public static IServiceCollection AddPinatBotCaching(this IServiceCollection services, Action<RedisCacheOptions>? redisCacheOptionsAction) =>
+    public static IServiceCollection AddPinatBotCaching(this IServiceCollection services, Action<RedisCacheOptions> redisCacheOptionsAction) =>
         services
             .AddSingleton<DiscordGatewayCache>()
             .Decorate<IDiscordRestChannelAPI, CachingDiscordRestChannelAPI>()

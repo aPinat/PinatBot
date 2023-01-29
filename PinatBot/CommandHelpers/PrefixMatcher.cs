@@ -9,9 +9,9 @@ public class PrefixMatcher : ICommandPrefixMatcher
 {
     private readonly DiscordGatewayCache _cache;
     private readonly Configuration _configuration;
-    private readonly MessageContext _messageContext;
+    private readonly IMessageContext _messageContext;
 
-    public PrefixMatcher(DiscordGatewayCache cache, Configuration configuration, MessageContext messageContext)
+    public PrefixMatcher(DiscordGatewayCache cache, Configuration configuration, IMessageContext messageContext)
     {
         _cache = cache;
         _configuration = configuration;

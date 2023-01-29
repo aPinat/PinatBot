@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PinatBot.CommandHelpers;
@@ -22,14 +21,14 @@ public sealed class PinatBot : BackgroundService
     private readonly SlashService _slashService;
 
     public PinatBot(IHostEnvironment hostEnvironment,
-        IConfiguration configuration,
+        Configuration configuration,
         ILogger<PinatBot> logger,
         IDbContextFactory<Database> dbContextFactory,
         DiscordGatewayClient discordGatewayClient,
         SlashService slashService)
     {
         _hostEnvironment = hostEnvironment;
-        _configuration = configuration.Get<Configuration>();
+        _configuration = configuration;
         _logger = logger;
         _dbContextFactory = dbContextFactory;
         _discordGatewayClient = discordGatewayClient;

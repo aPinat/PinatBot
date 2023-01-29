@@ -24,6 +24,8 @@ await Host.CreateDefaultBuilder(args)
     {
         var isDevelopment = context.HostingEnvironment.IsDevelopment();
         var configuration = context.Configuration.Get<Configuration>();
+        if (configuration is null)
+            throw new InvalidOperationException("Configuration could not be bound to type...");
 
         collection
             .AddSingleton(configuration)
@@ -39,7 +41,7 @@ await Host.CreateDefaultBuilder(args)
             {
                 options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildMembers | GatewayIntents.GuildEmojisAndStickers | GatewayIntents.GuildVoiceStates | GatewayIntents.GuildPresences |
                                   GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContents;
-                options.Presence = new UpdatePresence(ClientStatus.DND, false, null, new[] { new Activity("#Pinats", ActivityType.Competing) });
+                options.Presence = new UpdatePresence(UserStatus.DND, false, null, new[] { new Activity("#Pinats", ActivityType.Competing) });
             })
             .AddPinatBotCaching(options => options.Configuration = configuration.ConnectionStrings.Redis)
             .AddSingleton<Discord>()

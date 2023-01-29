@@ -209,7 +209,7 @@ public class GeneralLoggingService
         builder.AddField("Member ID", m.User.ID.ToString(), true);
         builder.AddField("Created", m.User.ID.Timestamp.ToDiscordTimestamp(), true);
 
-        var auditLogResult = await _discord.Rest.AuditLog.GetAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberKick, limit: 5, ct: cancellationToken);
+        var auditLogResult = await _discord.Rest.AuditLog.GetGuildAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberKick, limit: 5, ct: cancellationToken);
         if (auditLogResult.IsDefined(out var auditLog))
         {
             var entry = auditLog.AuditLogEntries.FirstOrDefault(e => e.TargetID == m.User.ID.ToString() && e.ID.Timestamp.Subtract(time).TotalSeconds is > -10 and < 10);
@@ -223,7 +223,7 @@ public class GeneralLoggingService
             }
         }
 
-        auditLogResult = await _discord.Rest.AuditLog.GetAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberBanAdd, limit: 5, ct: cancellationToken);
+        auditLogResult = await _discord.Rest.AuditLog.GetGuildAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberBanAdd, limit: 5, ct: cancellationToken);
         if (!auditLogResult.IsDefined(out auditLog))
             goto SEND;
 

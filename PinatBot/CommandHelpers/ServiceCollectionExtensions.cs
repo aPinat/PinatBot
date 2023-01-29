@@ -27,5 +27,6 @@ public static class ServiceCollectionExtensions
             .Finish()
             .AddInteractivity()
             .AddPagination()
+            .AddPreparationErrorEvent<CommandPreparationErrorHandler>()
             .AddPostExecutionEvent<PostCommandExecutionHandler>();
 }

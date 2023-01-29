@@ -23,6 +23,16 @@ public partial class CachingDiscordRestUserAPI
 
     public Task<Result<IReadOnlyList<IConnection>>> GetUserConnectionsAsync(CancellationToken ct = default) => _actual.GetUserConnectionsAsync(ct);
 
+    public Task<Result<IApplicationRoleConnection>> GetUserApplicationRoleConnectionAsync(Snowflake applicationID, CancellationToken ct = default) =>
+        _actual.GetUserApplicationRoleConnectionAsync(applicationID, ct);
+
+    public Task<Result<IApplicationRoleConnection>> UpdateUserApplicationRoleConnectionAsync(Snowflake applicationID,
+        Optional<string> platformName = default,
+        Optional<string> platformUsername = default,
+        Optional<IReadOnlyDictionary<string, string>> metadata = default,
+        CancellationToken ct = default) =>
+        _actual.UpdateUserApplicationRoleConnectionAsync(applicationID, platformName, platformUsername, metadata, ct);
+
     public RestRequestCustomization WithCustomization(Action<RestRequestBuilder> requestCustomizer)
     {
         if (_actual is not IRestCustomizable customizable)
