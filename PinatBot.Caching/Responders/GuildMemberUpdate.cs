@@ -27,6 +27,7 @@ public class GuildMemberUpdate : IResponder<IGuildMemberUpdate>
                 m.PremiumSince.IsDefined(out var premiumSince) ? premiumSince : member.PremiumSince,
                 m.IsDeafened.IsDefined(out var isDeafened) ? isDeafened : member.IsDeafened,
                 m.IsMuted.IsDefined(out var isMuted) ? isMuted : member.IsMuted,
+                member.Flags,
                 m.IsPending.IsDefined(out var isPending) ? isPending : member.IsPending,
                 member.Permissions,
                 m.CommunicationDisabledUntil.IsDefined(out var communicationDisabledUntil) ? communicationDisabledUntil : member.CommunicationDisabledUntil
@@ -41,6 +42,7 @@ public class GuildMemberUpdate : IResponder<IGuildMemberUpdate>
                 m.PremiumSince,
                 m.IsDeafened.IsDefined(out var isDeafened) && isDeafened,
                 m.IsMuted.IsDefined(out var isMuted) && isMuted,
+                default,
                 m.IsPending.IsDefined(out var isPending) && isPending,
                 default,
                 m.CommunicationDisabledUntil

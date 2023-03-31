@@ -75,12 +75,16 @@ public partial class CachingDiscordRestChannelAPI
     public Task<Result<IChannel>> ModifyGuildStageChannelAsync(Snowflake channelID,
         Optional<string> name = default,
         Optional<int?> position = default,
+        Optional<bool?> isNsfw = default,
         Optional<int?> bitrate = default,
+        Optional<int?> userLimit = default,
         Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default,
         Optional<string?> rtcRegion = default,
+        Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildStageChannelAsync(channelID, name, position, bitrate, permissionOverwrites, rtcRegion, reason, ct);
+        _actual.ModifyGuildStageChannelAsync(channelID, name, position, isNsfw, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
 
     public Task<Result<IChannel>> ModifyGuildAnnouncementChannelAsync(Snowflake channelID,
         Optional<string> name = default,

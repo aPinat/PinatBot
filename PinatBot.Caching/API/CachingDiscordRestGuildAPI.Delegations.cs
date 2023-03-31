@@ -73,6 +73,74 @@ public partial class CachingDiscordRestGuildAPI
         _actual.CreateGuildChannelAsync(guildID, name, type, topic, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode,
             defaultAutoArchiveDuration, defaultReactionEmoji, availableTags, defaultSortOrder, reason, ct);
 
+    public Task<Result<IChannel>> CreateGuildTextChannelAsync(Snowflake guildID,
+        string name,
+        Optional<string?> topic = default,
+        Optional<int?> rateLimitPerUser = default,
+        Optional<int?> position = default,
+        Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default,
+        Optional<bool?> isNsfw = default,
+        Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.CreateGuildTextChannelAsync(guildID, name, topic, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, reason, ct);
+
+    public Task<Result<IChannel>> CreateGuildAnnouncementChannelAsync(Snowflake guildID,
+        string name,
+        Optional<int?> bitrate = default,
+        Optional<int?> position = default,
+        Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default,
+        Optional<bool?> isNsfw = default,
+        Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.CreateGuildAnnouncementChannelAsync(guildID, name, bitrate, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, reason, ct);
+
+    public Task<Result<IChannel>> CreateGuildForumChannelAsync(Snowflake guildID,
+        string name,
+        Optional<string?> topic = default,
+        Optional<int?> position = default,
+        Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default,
+        Optional<bool?> isNsfw = default,
+        Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
+        Optional<IDefaultReaction?> defaultReactionEmoji = default,
+        Optional<IReadOnlyList<IForumTag>?> availableTags = default,
+        Optional<SortOrder?> defaultSortOrder = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.CreateGuildForumChannelAsync(guildID, name, topic, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, defaultReactionEmoji, availableTags, defaultSortOrder, reason, ct);
+
+    public Task<Result<IChannel>> CreateGuildVoiceChannelAsync(Snowflake guildID,
+        string name,
+        Optional<int?> bitrate = default,
+        Optional<int?> userLimit = default,
+        Optional<int?> position = default,
+        Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default,
+        Optional<bool?> isNsfw = default,
+        Optional<string?> rtcRegion = default,
+        Optional<VideoQualityMode?> videoQualityMode = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.CreateGuildVoiceChannelAsync(guildID, name, bitrate, userLimit, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode, reason, ct);
+
+    public Task<Result<IChannel>> CreateGuildStageChannelAsync(Snowflake guildID,
+        string name,
+        Optional<int?> bitrate = default,
+        Optional<int?> userLimit = default,
+        Optional<int?> position = default,
+        Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default,
+        Optional<bool?> isNsfw = default,
+        Optional<string?> rtcRegion = default,
+        Optional<VideoQualityMode?> videoQualityMode = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        _actual.CreateGuildStageChannelAsync(guildID, name, bitrate, userLimit, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode, reason, ct);
+
     public Task<Result> ModifyGuildChannelPositionsAsync(Snowflake guildID,
         IReadOnlyList<(Snowflake ChannelID, int? Position, bool? LockPermissions, Snowflake? ParentID)> positionModifications,
         CancellationToken ct = default) => _actual.ModifyGuildChannelPositionsAsync(guildID, positionModifications, ct);
@@ -97,9 +165,10 @@ public partial class CachingDiscordRestGuildAPI
         Optional<bool?> isDeafened = default,
         Optional<Snowflake?> channelID = default,
         Optional<DateTimeOffset?> communicationDisabledUntil = default,
+        Optional<GuildMemberFlags> flags = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildMemberAsync(guildID, userID, nickname, roles, isMuted, isDeafened, channelID, communicationDisabledUntil, reason, ct);
+        _actual.ModifyGuildMemberAsync(guildID, userID, nickname, roles, isMuted, isDeafened, channelID, communicationDisabledUntil, flags, reason, ct);
 
     public Task<Result<IGuildMember>> ModifyCurrentMemberAsync(Snowflake guildID, Optional<string?> nickname = default, Optional<string> reason = default, CancellationToken ct = default) =>
         _actual.ModifyCurrentMemberAsync(guildID, nickname, reason, ct);
