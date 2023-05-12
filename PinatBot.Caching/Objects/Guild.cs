@@ -99,6 +99,8 @@ public class Guild : IGuildCreate.IAvailableGuild
 
     public Optional<int> MaxVideoChannelUsers { get; private set; }
 
+    public Optional<int> MaxStageVideoChannelUsers { get; private set; }
+
     public Optional<int> ApproximateMemberCount { get; private set; }
 
     public Optional<int> ApproximatePresenceCount { get; private set; }
@@ -179,6 +181,7 @@ public class Guild : IGuildCreate.IAvailableGuild
         PreferredLocale = g.PreferredLocale;
         PublicUpdatesChannelID = g.PublicUpdatesChannelID;
         MaxVideoChannelUsers = g.MaxVideoChannelUsers;
+        MaxStageVideoChannelUsers = g.MaxStageVideoChannelUsers;
         ApproximateMemberCount = g.ApproximateMemberCount;
         ApproximatePresenceCount = g.ApproximatePresenceCount;
         WelcomeScreen = g.WelcomeScreen;
@@ -274,6 +277,7 @@ public class Guild : IGuildCreate.IAvailableGuild
         PreferredLocale = g.PreferredLocale;
         PublicUpdatesChannelID = g.PublicUpdatesChannelID;
         MaxVideoChannelUsers = g.MaxVideoChannelUsers;
+        MaxStageVideoChannelUsers = g.MaxStageVideoChannelUsers;
         ApproximateMemberCount = g.ApproximateMemberCount;
         ApproximatePresenceCount = g.ApproximatePresenceCount;
         WelcomeScreen = g.WelcomeScreen;

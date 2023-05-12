@@ -282,6 +282,8 @@ public partial class CachingDiscordRestGuildAPI
         CancellationToken ct = default) =>
         _actual.ModifyGuildWelcomeScreenAsync(guildID, isEnabled, welcomeChannels, description, reason, ct);
 
+    public Task<Result<IGuildOnboarding>> GetGuildOnboardingAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildOnboardingAsync(guildID, ct);
+
     public Task<Result> ModifyCurrentUserVoiceStateAsync(Snowflake guildID,
         Snowflake channelID,
         Optional<bool> suppress = default,
