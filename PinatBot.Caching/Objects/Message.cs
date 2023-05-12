@@ -239,7 +239,7 @@ public class Message : IMessageCreate
             Components = new Optional<IReadOnlyList<IMessageComponent>>(components);
 
         if (m.StickerItems.IsDefined(out var stickerItems))
-            StickerItems = new Optional<IReadOnlyList<IStickerItem>>();
+            StickerItems = new Optional<IReadOnlyList<IStickerItem>>(stickerItems);
 
         if (m.Position.IsDefined(out var position))
             Position = position;
