@@ -45,7 +45,7 @@ public class VoiceStateLoggingService
                 return Result.FromError(channelResult);
 
             builder.Colour = Color.Lime;
-            builder.Description = $"{user.Mention()} **joined** `#{channel.Name.Value}` ({channel.Mention()})";
+            builder.Description = $"{user.Mention()} `{user.DiscordTag()}` **joined** `#{channel.Name.Value}` ({channel.Mention()})";
         }
         else if (!vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id) is true && id.HasValue)
         {
@@ -54,7 +54,7 @@ public class VoiceStateLoggingService
                 return Result.FromError(channelResult);
 
             builder.Colour = Color.Red;
-            builder.Description = $"{user.Mention()} **left** `#{channel.Name.Value}` ({channel.Mention()})";
+            builder.Description = $"{user.Mention()} `{user.DiscordTag()}` **left** `#{channel.Name.Value}` ({channel.Mention()})";
         }
         else if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id2) is true && id2.HasValue)
         {
@@ -67,7 +67,7 @@ public class VoiceStateLoggingService
                 return Result.FromError(newChannelResult);
 
             builder.Colour = Color.Orange;
-            builder.Description = $"{user.Mention()} **moved** `#{oldChannel.Name.Value}` ==> `#{newChannel.Name.Value}` ({oldChannel.Mention()} ==> {newChannel.Mention()})";
+            builder.Description = $"{user.Mention()} `{user.DiscordTag()}` **moved** `#{oldChannel.Name.Value}` ==> `#{newChannel.Name.Value}` ({oldChannel.Mention()} ==> {newChannel.Mention()})";
         }
         else
         {

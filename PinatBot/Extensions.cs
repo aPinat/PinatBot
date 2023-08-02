@@ -81,7 +81,7 @@ public static class Extensions
         $"https://discord.com/channels/{guildId}/{channelId ?? message.ChannelID.Value}/{messageId ?? message.ID.Value}";
 
     public static string DiscordTag(this IUser user)
-        => $"{user.Username}#{user.Discriminator:0000}";
+        => user.Discriminator != 0 ? $"{user.Username}#{user.Discriminator:0000}" : $"@{user.Username} ({user.GlobalName})";
 
     public static string DiscordTag(this IGuildMember member) =>
         member.User.IsDefined(out var user) ? user.DiscordTag() : throw new ArgumentException("Guild member has no user.", nameof(member));
