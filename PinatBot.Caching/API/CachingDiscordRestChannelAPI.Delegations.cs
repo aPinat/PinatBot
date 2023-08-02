@@ -62,6 +62,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<string> name = default,
         Optional<int?> position = default,
         Optional<bool?> isNsfw = default,
+        Optional<int?> rateLimitPerUser = default,
         Optional<int?> bitrate = default,
         Optional<int?> userLimit = default,
         Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
@@ -70,12 +71,13 @@ public partial class CachingDiscordRestChannelAPI
         Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildVoiceChannelAsync(channelID, name, position, isNsfw, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
+        _actual.ModifyGuildVoiceChannelAsync(channelID, name, position, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
 
     public Task<Result<IChannel>> ModifyGuildStageChannelAsync(Snowflake channelID,
         Optional<string> name = default,
         Optional<int?> position = default,
         Optional<bool?> isNsfw = default,
+        Optional<int?> rateLimitPerUser = default,
         Optional<int?> bitrate = default,
         Optional<int?> userLimit = default,
         Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
@@ -84,7 +86,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildStageChannelAsync(channelID, name, position, isNsfw, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
+        _actual.ModifyGuildStageChannelAsync(channelID, name, position, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
 
     public Task<Result<IChannel>> ModifyGuildAnnouncementChannelAsync(Snowflake channelID,
         Optional<string> name = default,

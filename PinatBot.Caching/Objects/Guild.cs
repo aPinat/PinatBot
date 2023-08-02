@@ -135,6 +135,8 @@ public class Guild : IGuildCreate.IAvailableGuild
 
     public IReadOnlyList<IGuildScheduledEvent> GuildScheduledEvents => GuildScheduledEventsInternal.Values.ToImmutableList();
 
+    public Snowflake? SafetyAlertsChannelID { get; private set; }
+
     internal void Populate(IGuildCreate.IAvailableGuild g)
     {
         if (g.ID != ID)
@@ -193,7 +195,6 @@ public class Guild : IGuildCreate.IAvailableGuild
                 StickersInternal[sticker.ID.Value] = sticker;
 
         IsPremiumProgressBarEnabled = g.IsPremiumProgressBarEnabled;
-
         JoinedAt = g.JoinedAt;
         IsLarge = g.IsLarge;
         IsUnavailable = g.IsUnavailable;
@@ -229,6 +230,8 @@ public class Guild : IGuildCreate.IAvailableGuild
         GuildScheduledEventsInternal.Clear();
         foreach (var guildScheduledEvent in g.GuildScheduledEvents)
             GuildScheduledEventsInternal[guildScheduledEvent.ID.Value] = guildScheduledEvent;
+
+        SafetyAlertsChannelID = g.SafetyAlertsChannelID;
     }
 
     internal void Update(IGuildUpdate g)
@@ -289,6 +292,7 @@ public class Guild : IGuildCreate.IAvailableGuild
                 StickersInternal[sticker.ID.Value] = sticker;
 
         IsPremiumProgressBarEnabled = g.IsPremiumProgressBarEnabled;
+        SafetyAlertsChannelID = g.SafetyAlertsChannelID;
     }
 
     internal void Update(IPresenceUpdate p, Snowflake userId) => PresencesInternal[userId.Value] = p;

@@ -55,7 +55,7 @@ public class LoggingCommands : CommandGroup
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var logging = await GetLoggingConfigAsync(type, database, guildId.Value.Value);
+        var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
         if (logging is null)
             return await _feedbackService.SendContextualInfoAsync($"No {type} logging channel set.");
 
@@ -79,17 +79,17 @@ public class LoggingCommands : CommandGroup
             return await _feedbackService.SendContextualErrorAsync("Channel must be in this server.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var logging = await GetLoggingConfigAsync(type, database, guildId.Value.Value);
+        var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
         if (logging is null)
         {
             switch (type)
             {
                 case LoggingType.General:
-                    logging = new GeneralLoggingConfig(guildId.Value.Value) { ChannelId = channel.ID.Value, Enabled = true };
+                    logging = new GeneralLoggingConfig(guildId.Value) { ChannelId = channel.ID.Value, Enabled = true };
                     await database.GeneralLoggingConfigs.AddAsync((GeneralLoggingConfig)logging);
                     break;
                 case LoggingType.Voice:
-                    logging = new VoiceStateLoggingConfig(guildId.Value.Value) { ChannelId = channel.ID.Value, Enabled = true };
+                    logging = new VoiceStateLoggingConfig(guildId.Value) { ChannelId = channel.ID.Value, Enabled = true };
                     await database.VoiceStateLoggingConfigs.AddAsync((VoiceStateLoggingConfig)logging);
                     break;
                 default:
@@ -114,7 +114,7 @@ public class LoggingCommands : CommandGroup
             return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         await using var database = await _dbContextFactory.CreateDbContextAsync();
-        var logging = await GetLoggingConfigAsync(type, database, guildId.Value.Value);
+        var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
         if (logging is null)
             return await _feedbackService.SendContextualErrorAsync($"No {type} logging channel set.");
 

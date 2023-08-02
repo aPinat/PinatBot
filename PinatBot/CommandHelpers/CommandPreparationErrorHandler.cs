@@ -24,7 +24,7 @@ public class CommandPreparationErrorHandler : IPreparationErrorEvent
 
     public async Task<Result> PreparationFailed(IOperationContext context, IResult preparationResult, CancellationToken ct = default)
     {
-        IUser user = new User(new Snowflake(0), "UNKNOWN", 0000, default);
+        IUser user = new User(new Snowflake(0), "<UNKNOWN>", 0000, "<UNKNOWN>", default);
         string command, type;
         switch (context)
         {

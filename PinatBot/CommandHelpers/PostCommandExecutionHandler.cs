@@ -23,7 +23,7 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
 
     public async Task<Result> AfterExecutionAsync(ICommandContext context, IResult commandResult, CancellationToken ct = default)
     {
-        IUser user = new User(new Snowflake(0), "UNKNOWN", 0000, default);
+        IUser user = new User(new Snowflake(0), "<UNKNOWN>", 0000, "<UNKNOWN>", default);
         string command, type;
         switch (context)
         {

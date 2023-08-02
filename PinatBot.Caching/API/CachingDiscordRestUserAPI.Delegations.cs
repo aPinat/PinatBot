@@ -13,7 +13,8 @@ public partial class CachingDiscordRestUserAPI
     public Task<Result<IReadOnlyList<IPartialGuild>>> GetCurrentUserGuildsAsync(Optional<Snowflake> before = default,
         Optional<Snowflake> after = default,
         Optional<int> limit = default,
-        CancellationToken ct = default) => _actual.GetCurrentUserGuildsAsync(before, after, limit, ct);
+        Optional<bool> withCounts = default,
+        CancellationToken ct = default) => _actual.GetCurrentUserGuildsAsync(before, after, limit, withCounts, ct);
 
     public Task<Result> LeaveGuildAsync(Snowflake guildID, CancellationToken ct = default) => _actual.LeaveGuildAsync(guildID, ct);
 

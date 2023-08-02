@@ -36,13 +36,13 @@ public class ModerationCommands : CommandGroup
             return Result.FromError(new InvalidOperationError("Could not get channel."));
 
         await _feedbackService.SendContextualInfoAsync($"Purging {count} messages...");
-        var messagesResult = await _discord.Rest.Channel.GetChannelMessagesAsync(channelId.Value, limit: count + 1);
+        var messagesResult = await _discord.Rest.Channel.GetChannelMessagesAsync(channelId, limit: count + 1);
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
 
         if (messages.Count == 1)
-            return await _discord.Rest.Channel.DeleteMessageAsync(channelId.Value, messages[0].ID);
+            return await _discord.Rest.Channel.DeleteMessageAsync(channelId, messages[0].ID);
 
-        return await _discord.Rest.Channel.BulkDeleteMessagesAsync(channelId.Value, messages.Select(message => message.ID).ToArray());
+        return await _discord.Rest.Channel.BulkDeleteMessagesAsync(channelId, messages.Select(message => message.ID).ToArray());
     }
 }

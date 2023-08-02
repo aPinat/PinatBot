@@ -43,7 +43,7 @@ public class GeneralCommands : CommandGroup
         if (!member.User.IsDefined(out var memberUser))
             return await _feedbackService.SendContextualErrorAsync("Could not get user.");
 
-        if (!_discord.GatewayCache.GetGuildPresence(guildId.Value, memberUser.ID).IsDefined(out var presence) ||
+        if (!_discord.GatewayCache.GetGuildPresence(guildId, memberUser.ID).IsDefined(out var presence) ||
             !presence.Activities.IsDefined(out var activities))
             return await _feedbackService.SendContextualNeutralAsync($"{member.Mention()} is not currently playing anything.");
 
@@ -63,7 +63,7 @@ public class GeneralCommands : CommandGroup
         if (!member.User.IsDefined(out var memberUser))
             return await _feedbackService.SendContextualErrorAsync("Could not get user.");
 
-        if (!_discord.GatewayCache.GetGuildPresence(guildId.Value, memberUser.ID).IsDefined(out var presence))
+        if (!_discord.GatewayCache.GetGuildPresence(guildId, memberUser.ID).IsDefined(out var presence))
             return await _feedbackService.SendContextualErrorAsync($"Cannot find presence for {member.Mention()}.");
 
         var presenceJson = JsonSerializer.Serialize(presence, _discord.JsonSerializerOptions);
@@ -77,7 +77,7 @@ public class GeneralCommands : CommandGroup
         if (!_context.TryGetGuildID(out var guildId))
             goto USER;
 
-        var memberResult = await _discord.Rest.Guild.GetGuildMemberAsync(guildId.Value, user.ID);
+        var memberResult = await _discord.Rest.Guild.GetGuildMemberAsync(guildId, user.ID);
         if (memberResult.IsDefined(out var member))
             return await _feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(member, _discord.JsonSerializerOptions)}```");
 
