@@ -2,6 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 COPY ["*.sln", "."]
+COPY ["*.props", "."]
 COPY ["PinatBot/PinatBot.csproj", "PinatBot/"]
 COPY ["PinatBot.Caching/PinatBot.Caching.csproj", "PinatBot.Caching/"]
 COPY ["PinatBot.Data/PinatBot.Data.csproj", "PinatBot.Data/"]

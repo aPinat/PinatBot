@@ -21,7 +21,7 @@ indent_size = 2
 indent_size = 2
 
 # XML project files
-[*.csproj]
+[*.{csproj,props}]
 indent_size = 2
 
 # Solution files
