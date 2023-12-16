@@ -60,6 +60,25 @@ public class DiscordGatewayCache(DistributedCacheProvider distributedCacheProvid
             ? Result<IPartialVoiceState>.FromSuccess(voiceState)
             : Result<IPartialVoiceState>.FromError(new NotFoundError("Voice state not found in cache"));
 
+    public Result<IReadOnlyList<IPartialVoiceState>> GetVoiceStates(Snowflake guildID) =>
+        InternalGuilds.TryGetValue(guildID.Value, out var guild)
+            ? Result<IReadOnlyList<IPartialVoiceState>>.FromSuccess(guild.VoiceStatesInternal.Select(pair => pair.Value).ToImmutableList())
+            : Result<IReadOnlyList<IPartialVoiceState>>.FromError(new NotFoundError("Guild not found in cache"));
+
+    public Result<IReadOnlyList<IPartialVoiceState>> GetVoiceStates(Snowflake guildID, Snowflake channelID) =>
+        InternalGuilds.TryGetValue(guildID.Value, out var guild)
+            ? Result<IReadOnlyList<IPartialVoiceState>>.FromSuccess(guild.VoiceStatesInternal.Where(pair => pair.Value.ChannelID == channelID).Select(pair => pair.Value).ToImmutableList())
+            : Result<IReadOnlyList<IPartialVoiceState>>.FromError(new NotFoundError("Guild not found in cache"));
+
+    public Result CacheVoiceState(Snowflake guildID, IVoiceStateUpdate vs)
+    {
+        if (!InternalGuilds.TryGetValue(guildID.Value, out var guild))
+            return Result.FromError(new NotFoundError("Guild not found in cache"));
+
+        guild.VoiceStatesInternal[vs.UserID.Value] = vs;
+        return Result.FromSuccess();
+    }
+
     public Result<IChannel> GetChannel(Snowflake guildID, Snowflake channelID) =>
         InternalGuilds.TryGetValue(guildID.Value, out var guild) && guild.ChannelsInternal.TryGetValue(channelID.Value, out var channel)
             ? Result<IChannel>.FromSuccess(channel)

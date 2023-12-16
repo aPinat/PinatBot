@@ -7,6 +7,7 @@ using PinatBot;
 using PinatBot.Caching;
 using PinatBot.CommandHelpers;
 using PinatBot.Data;
+using PinatBot.Modules.AutoVoiceChannels;
 using PinatBot.Modules.Moderation;
 using Remora.Discord.API.Abstractions.Gateway.Commands;
 using Remora.Discord.API.Abstractions.Objects;
@@ -51,6 +52,8 @@ await Host.CreateDefaultBuilder(args)
             .AddResponder<MemberJoinRoleResponder>()
             .AddSingleton<VoiceStateLoggingService>()
             .AddResponder<VoiceStateLoggingResponder>()
+            .AddSingleton<AutoVoiceChannelService>()
+            .AddResponder<AutoVoiceChannelResponder>()
             .AddPinatBotCommands()
             .AddHostedService<PinatBot.PinatBot>();
     })
