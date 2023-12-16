@@ -4,15 +4,11 @@ using Remora.Results;
 
 namespace PinatBot.Caching.Responders;
 
-public class StageInstanceCreate : IResponder<IStageInstanceCreate>
+public class StageInstanceCreate(DiscordGatewayCache cache) : IResponder<IStageInstanceCreate>
 {
-    private readonly DiscordGatewayCache _cache;
-
-    public StageInstanceCreate(DiscordGatewayCache cache) => _cache = cache;
-
     public Task<Result> RespondAsync(IStageInstanceCreate s, CancellationToken ct = default)
     {
-        _cache.InternalGuilds[s.GuildID.Value].StageInstancesInternal[s.ID.Value] = s;
+        cache.InternalGuilds[s.GuildID.Value].StageInstancesInternal[s.ID.Value] = s;
         return Task.FromResult(Result.FromSuccess());
     }
 }

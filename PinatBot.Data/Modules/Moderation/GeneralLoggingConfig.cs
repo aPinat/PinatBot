@@ -3,12 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace PinatBot.Data.Modules.Moderation;
 
-public class GeneralLoggingConfig : LoggingConfig
-{
-    public GeneralLoggingConfig(ulong guildId) : base(guildId)
-    {
-    }
-}
+public class GeneralLoggingConfig(ulong guildId) : LoggingConfig(guildId);
 
 public class GeneralLoggingConfigEntityConfiguration : IEntityTypeConfiguration<GeneralLoggingConfig>
 {

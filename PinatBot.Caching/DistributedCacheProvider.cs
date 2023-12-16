@@ -5,38 +5,31 @@ using Remora.Rest.Core;
 
 namespace PinatBot.Caching;
 
-public class DistributedCacheProvider
+public class DistributedCacheProvider(IDistributedCache distributedCache, IOptionsMonitor<JsonSerializerOptions> jsonOptions)
 {
-    public DistributedCacheProvider(IDistributedCache distributedCache, IOptionsMonitor<JsonSerializerOptions> jsonOptions)
-    {
-        DistributedCache = distributedCache;
-        JsonSerializerOptions = jsonOptions.Get("Discord");
-    }
+    private JsonSerializerOptions JsonSerializerOptions { get; } = jsonOptions.Get("Discord");
 
-    private IDistributedCache DistributedCache { get; }
-    private JsonSerializerOptions JsonSerializerOptions { get; }
-
-    public async Task CacheAsync<TInstance>(string key, TInstance instance, CancellationToken ct = default)
+    public Task CacheAsync<TInstance>(string key, TInstance instance, CancellationToken ct = default)
         where TInstance : class
     {
         var serialized = JsonSerializer.Serialize(instance, JsonSerializerOptions);
-        await DistributedCache.SetStringAsync(key, serialized, ct);
+        return distributedCache.SetStringAsync(key, serialized, ct);
     }
 
     public async Task<TInstance?> RetrieveAsync<TInstance>(string key, CancellationToken ct = default) where TInstance : class
     {
-        var value = await DistributedCache.GetAsync(key, ct);
+        var value = await distributedCache.GetAsync(key, ct);
         return value is null ? null : JsonSerializer.Deserialize<TInstance>(value, JsonSerializerOptions);
     }
 
-    public async Task EvictAsync(string key, CancellationToken ct = default) => await DistributedCache.RemoveAsync(key, ct);
+    public Task EvictAsync(string key, CancellationToken ct = default) => distributedCache.RemoveAsync(key, ct);
 
     public async Task<TInstance?> EvictAsync<TInstance>(string key, CancellationToken ct = default) where TInstance : class
     {
-        var bytes = await DistributedCache.GetAsync(key, ct);
+        var bytes = await distributedCache.GetAsync(key, ct);
         if (bytes is null)
             return null;
-        await DistributedCache.RemoveAsync(key, ct);
+        await distributedCache.RemoveAsync(key, ct);
         return JsonSerializer.Deserialize<TInstance>(bytes, JsonSerializerOptions);
     }
 

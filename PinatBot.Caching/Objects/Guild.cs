@@ -7,7 +7,7 @@ using Remora.Rest.Core;
 
 namespace PinatBot.Caching.Objects;
 
-public class Guild : IGuildCreate.IAvailableGuild
+public class Guild(Snowflake id) : IGuildCreate.IAvailableGuild
 {
     internal readonly ConcurrentDictionary<ulong, IChannel> ChannelsInternal = new();
 
@@ -29,9 +29,7 @@ public class Guild : IGuildCreate.IAvailableGuild
 
     internal readonly ConcurrentDictionary<ulong, IPartialVoiceState> VoiceStatesInternal = new();
 
-    public Guild(Snowflake id) => ID = id;
-
-    public Snowflake ID { get; }
+    public Snowflake ID { get; } = id;
 
     public string Name { get; private set; } = null!;
 

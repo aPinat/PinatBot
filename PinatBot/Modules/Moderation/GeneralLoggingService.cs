@@ -12,17 +12,9 @@ using Remora.Results;
 
 namespace PinatBot.Modules.Moderation;
 
-public class GeneralLoggingService
+public class GeneralLoggingService(IDbContextFactory<Database> dbContextFactory, Discord discord)
 {
-    private readonly IDbContextFactory<Database> _dbContextFactory;
-    private readonly Discord _discord;
     private readonly HttpClient _httpClient = new();
-
-    public GeneralLoggingService(IDbContextFactory<Database> dbContextFactory, Discord discord)
-    {
-        _dbContextFactory = dbContextFactory;
-        _discord = discord;
-    }
 
     private async Task<Result> SendLogMessageAsync(ulong channelId, EmbedBuilder builder, List<OneOf<FileData, IPartialAttachment>>? attachments = null, CancellationToken cancellationToken = default)
     {
@@ -31,14 +23,14 @@ public class GeneralLoggingService
             return Result.FromError(buildResult);
 
         var id = new Snowflake(channelId);
-        var messageResult = await _discord.Rest.Channel.CreateMessageAsync(id, embeds: new[] { embed }, ct: cancellationToken);
+        var messageResult = await discord.Rest.Channel.CreateMessageAsync(id, embeds: new[] { embed }, ct: cancellationToken);
         if (attachments is null)
             return messageResult.IsSuccess ? Result.FromSuccess() : Result.FromError(messageResult);
 
         if (!messageResult.IsDefined(out var message))
             return Result.FromError(messageResult);
         var attachmentResult =
-            await _discord.Rest.Channel.CreateMessageAsync(id, "Deleted Attachment(s):", attachments: attachments, messageReference: new MessageReference(message.ID), ct: cancellationToken);
+            await discord.Rest.Channel.CreateMessageAsync(id, "Deleted Attachment(s):", attachments: attachments, messageReference: new MessageReference(message.ID), ct: cancellationToken);
         return messageResult.IsSuccess && attachmentResult.IsSuccess ? Result.FromSuccess() :
             messageResult.IsSuccess ? Result.FromError(attachmentResult) : Result.FromError(messageResult);
     }
@@ -49,12 +41,12 @@ public class GeneralLoggingService
             (author.IsBot.IsDefined(out var isBot) && isBot) || m.WebhookID.HasValue || m.ApplicationID.HasValue || !m.EditedTimestamp.HasValue)
             return Result.FromSuccess();
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var database = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         var logging = database.GeneralLoggingConfigs.AsNoTracking().FirstOrDefault(config => config.GuildId == guildId.Value);
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
 
-        var cacheResult = await _discord.GatewayCache.GetMessageAsync(messageId, channelId, cancellationToken);
+        var cacheResult = await discord.GatewayCache.GetMessageAsync(messageId, channelId, cancellationToken);
         var beforeContent = !cacheResult.IsDefined(out var previousMessage) ? "_Message not in cache!_" :
             string.IsNullOrEmpty(previousMessage.Content) ? "_Message has no content!_" : previousMessage.Content;
         var afterContent = m.Content.IsDefined(out var content) && !string.IsNullOrEmpty(content) ? content : "_Message has no content!_";
@@ -122,7 +114,7 @@ public class GeneralLoggingService
         if (!m.GuildID.IsDefined(out var guildId))
             return Result.FromSuccess();
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var database = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         var logging = database.GeneralLoggingConfigs.AsNoTracking().FirstOrDefault(config => config.GuildId == guildId.Value);
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
@@ -132,7 +124,7 @@ public class GeneralLoggingService
         var channelId = m.ChannelID;
         var messageId = m.ID;
 
-        var cacheResult = await _discord.GatewayCache.GetMessageAsync(messageId, channelId, cancellationToken);
+        var cacheResult = await discord.GatewayCache.GetMessageAsync(messageId, channelId, cancellationToken);
         if (!cacheResult.IsDefined(out var cachedMessage))
         {
             builder.AddField("Channel", $"<#{channelId}>", true);
@@ -182,7 +174,7 @@ public class GeneralLoggingService
         if (!m.User.IsDefined(out var user))
             return Result.FromError(new ArgumentInvalidError(nameof(m.User), "User is not defined"));
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var database = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         var logging = database.GeneralLoggingConfigs.AsNoTracking().FirstOrDefault(config => config.GuildId == m.GuildID.Value);
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
@@ -199,7 +191,7 @@ public class GeneralLoggingService
     {
         var time = DateTimeOffset.UtcNow;
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var database = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         var logging = database.GeneralLoggingConfigs.AsNoTracking().FirstOrDefault(config => config.GuildId == m.GuildID.Value);
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
@@ -209,7 +201,7 @@ public class GeneralLoggingService
         builder.AddField("Member ID", m.User.ID.ToString(), true);
         builder.AddField("Created", m.User.ID.Timestamp.ToDiscordTimestamp(), true);
 
-        var auditLogResult = await _discord.Rest.AuditLog.GetGuildAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberKick, limit: 5, ct: cancellationToken);
+        var auditLogResult = await discord.Rest.AuditLog.GetGuildAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberKick, limit: 5, ct: cancellationToken);
         if (auditLogResult.IsDefined(out var auditLog))
         {
             var entry = auditLog.AuditLogEntries.FirstOrDefault(e => e.TargetID == m.User.ID.ToString() && e.ID.Timestamp.Subtract(time).TotalSeconds is > -10 and < 10);
@@ -223,7 +215,7 @@ public class GeneralLoggingService
             }
         }
 
-        auditLogResult = await _discord.Rest.AuditLog.GetGuildAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberBanAdd, limit: 5, ct: cancellationToken);
+        auditLogResult = await discord.Rest.AuditLog.GetGuildAuditLogAsync(m.GuildID, actionType: AuditLogEvent.MemberBanAdd, limit: 5, ct: cancellationToken);
         if (!auditLogResult.IsDefined(out auditLog))
             goto SEND;
 

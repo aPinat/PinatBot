@@ -4,10 +4,7 @@ using Remora.Results;
 
 namespace PinatBot.Modules.Moderation;
 
-public class VoiceStateLoggingResponder : IResponder<IVoiceStateUpdate>
+public class VoiceStateLoggingResponder(VoiceStateLoggingService voiceStateLoggingService) : IResponder<IVoiceStateUpdate>
 {
-    private readonly VoiceStateLoggingService _voiceStateLoggingService;
-    public VoiceStateLoggingResponder(VoiceStateLoggingService voiceStateLoggingService) => _voiceStateLoggingService = voiceStateLoggingService;
-
-    public Task<Result> RespondAsync(IVoiceStateUpdate vsu, CancellationToken ct = default) => _voiceStateLoggingService.LogVoiceStateUpdateAsync(vsu, ct);
+    public Task<Result> RespondAsync(IVoiceStateUpdate vsu, CancellationToken ct = default) => voiceStateLoggingService.LogVoiceStateUpdateAsync(vsu, ct);
 }

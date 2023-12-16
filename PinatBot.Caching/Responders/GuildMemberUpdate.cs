@@ -7,17 +7,13 @@ using Remora.Results;
 
 namespace PinatBot.Caching.Responders;
 
-public class GuildMemberUpdate : IResponder<IGuildMemberUpdate>
+public class GuildMemberUpdate(DiscordGatewayCache cache) : IResponder<IGuildMemberUpdate>
 {
-    private readonly DiscordGatewayCache _cache;
-
-    public GuildMemberUpdate(DiscordGatewayCache cache) => _cache = cache;
-
     public Task<Result> RespondAsync(IGuildMemberUpdate m, CancellationToken ct = default)
     {
-        _cache.InternalUsers[m.User.ID.Value] = m.User;
+        cache.InternalUsers[m.User.ID.Value] = m.User;
 
-        if (_cache.InternalGuilds[m.GuildID.Value].MembersInternal.TryGetValue(m.User.ID.Value, out var member))
+        if (cache.InternalGuilds[m.GuildID.Value].MembersInternal.TryGetValue(m.User.ID.Value, out var member))
             member = new GuildMember(
                 new Optional<IUser>(m.User),
                 m.Nickname.IsDefined(out var nickname) ? nickname : member.Nickname,
@@ -48,7 +44,7 @@ public class GuildMemberUpdate : IResponder<IGuildMemberUpdate>
                 m.CommunicationDisabledUntil
             );
 
-        _cache.InternalGuilds[m.GuildID.Value].MembersInternal[m.User.ID.Value] = member;
+        cache.InternalGuilds[m.GuildID.Value].MembersInternal[m.User.ID.Value] = member;
         return Task.FromResult(Result.FromSuccess());
     }
 }

@@ -10,17 +10,8 @@ using Remora.Results;
 
 namespace PinatBot.CommandHelpers;
 
-public class PostCommandExecutionHandler : IPostExecutionEvent
+public class PostCommandExecutionHandler(ILogger<PostCommandExecutionHandler> logger, FeedbackService feedbackService) : IPostExecutionEvent
 {
-    private readonly FeedbackService _feedbackService;
-    private readonly ILogger<PostCommandExecutionHandler> _logger;
-
-    public PostCommandExecutionHandler(ILogger<PostCommandExecutionHandler> logger, FeedbackService feedbackService)
-    {
-        _logger = logger;
-        _feedbackService = feedbackService;
-    }
-
     public async Task<Result> AfterExecutionAsync(ICommandContext context, IResult commandResult, CancellationToken ct = default)
     {
         IUser user = new User(new Snowflake(0), "<UNKNOWN>", 0000, "<UNKNOWN>", default);
@@ -45,7 +36,7 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
 
                 if (!interactionContext.Interaction.Data.Value.TryPickT0(out var applicationCommandData, out _))
                 {
-                    _logger.LogWarning("Interaction is not of type IApplicationCommandData, but of type {Type}", interactionContext.Interaction.Data.Value.GetType());
+                    logger.LogWarning("Interaction is not of type IApplicationCommandData, but of type {Type}", interactionContext.Interaction.Data.Value.GetType());
                     goto SUCCESS;
                 }
 
@@ -60,7 +51,7 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
 
         if (commandResult.IsSuccess)
         {
-            _logger.LogInformation("{UserDiscordTag} ({UserId}) successfully executed {CommandType} command '{Command}'", user.DiscordTag(), user.ID, type, command);
+            logger.LogInformation("{UserDiscordTag} ({UserId}) successfully executed {CommandType} command '{Command}'", user.DiscordTag(), user.ID, type, command);
             goto SUCCESS;
         }
 
@@ -73,14 +64,14 @@ public class PostCommandExecutionHandler : IPostExecutionEvent
         switch (error)
         {
             case ExceptionError e:
-                _logger.LogError(e.Exception, "Exception occured while {UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}'",
+                logger.LogError(e.Exception, "Exception occured while {UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}'",
                     user.DiscordTag(), user.ID, type, command);
-                replyResult = await _feedbackService.SendContextualErrorAsync("An exception occured while executing your command. Please try again later.", ct: ct);
+                replyResult = await feedbackService.SendContextualErrorAsync("An exception occured while executing your command. Please try again later.", ct: ct);
                 break;
             default:
-                _logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}', but errored with {ErrorType}: {ErrorMessage}'",
+                logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}', but errored with {ErrorType}: {ErrorMessage}'",
                     user.DiscordTag(), user.ID, type, command, error?.GetType().Name, error?.Message);
-                replyResult = await _feedbackService.SendContextualErrorAsync("An error occured while executing your command. Please try again later.", ct: ct);
+                replyResult = await feedbackService.SendContextualErrorAsync("An error occured while executing your command. Please try again later.", ct: ct);
                 break;
         }
 

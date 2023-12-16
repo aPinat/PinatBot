@@ -11,17 +11,8 @@ using Remora.Results;
 
 namespace PinatBot.CommandHelpers;
 
-public class CommandPreparationErrorHandler : IPreparationErrorEvent
+public class CommandPreparationErrorHandler(ILogger<CommandPreparationErrorHandler> logger, FeedbackService feedbackService) : IPreparationErrorEvent
 {
-    private readonly FeedbackService _feedbackService;
-    private readonly ILogger<CommandPreparationErrorHandler> _logger;
-
-    public CommandPreparationErrorHandler(ILogger<CommandPreparationErrorHandler> logger, FeedbackService feedbackService)
-    {
-        _logger = logger;
-        _feedbackService = feedbackService;
-    }
-
     public async Task<Result> PreparationFailed(IOperationContext context, IResult preparationResult, CancellationToken ct = default)
     {
         IUser user = new User(new Snowflake(0), "<UNKNOWN>", 0000, "<UNKNOWN>", default);
@@ -46,7 +37,7 @@ public class CommandPreparationErrorHandler : IPreparationErrorEvent
 
                 if (!interactionContext.Interaction.Data.Value.TryPickT0(out var applicationCommandData, out _))
                 {
-                    _logger.LogWarning("Interaction is not of type IApplicationCommandData, but of type {Type}", interactionContext.Interaction.Data.Value.GetType());
+                    logger.LogWarning("Interaction is not of type IApplicationCommandData, but of type {Type}", interactionContext.Interaction.Data.Value.GetType());
                     goto SUCCESS;
                 }
 
@@ -68,30 +59,30 @@ public class CommandPreparationErrorHandler : IPreparationErrorEvent
         switch (error)
         {
             case CommandNotFoundError:
-                _logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}' but the command was not found",
+                logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}' but the command was not found",
                     user.DiscordTag(), user.ID, type, command);
                 if (context is InteractionContext)
-                    replyResult = await _feedbackService.SendContextualErrorAsync("The command you tried to execute was not found.", ct: ct);
+                    replyResult = await feedbackService.SendContextualErrorAsync("The command you tried to execute was not found.", ct: ct);
                 break;
             case ConditionNotSatisfiedError e:
-                _logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}' but a condition was not satisfied: {ErrorMessage} {ConditionErrorMessage}",
+                logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}' but a condition was not satisfied: {ErrorMessage} {ConditionErrorMessage}",
                     user.DiscordTag(), user.ID, type, command, e.Message, preparationResult.Inner?.Inner?.Inner?.Inner?.Error?.Message);
-                replyResult = await _feedbackService.SendContextualErrorAsync($"Your command could not be executed.\n{preparationResult.Inner?.Inner?.Inner?.Inner?.Error?.Message}", ct: ct);
+                replyResult = await feedbackService.SendContextualErrorAsync($"Your command could not be executed.\n{preparationResult.Inner?.Inner?.Inner?.Inner?.Error?.Message}", ct: ct);
                 break;
             case ParameterParsingError e:
-                _logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}' but a parameter could not be parsed: {ParameterName}",
+                logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}' but a parameter could not be parsed: {ParameterName}",
                     user.DiscordTag(), user.ID, type, command, e.Parameter.ParameterShape.HintName);
-                replyResult = await _feedbackService.SendContextualErrorAsync($"Could not parse your input for `{e.Parameter.ParameterShape.HintName}`. Check your input and try again.", ct: ct);
+                replyResult = await feedbackService.SendContextualErrorAsync($"Could not parse your input for `{e.Parameter.ParameterShape.HintName}`. Check your input and try again.", ct: ct);
                 break;
             case ExceptionError e:
-                _logger.LogError(e.Exception, "Exception occured while {UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}'",
+                logger.LogError(e.Exception, "Exception occured while {UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}'",
                     user.DiscordTag(), user.ID, type, command);
-                replyResult = await _feedbackService.SendContextualErrorAsync("An exception occured while executing your command. Please try again later.", ct: ct);
+                replyResult = await feedbackService.SendContextualErrorAsync("An exception occured while executing your command. Please try again later.", ct: ct);
                 break;
             default:
-                _logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}', but errored with {ErrorType}: {ErrorMessage}'",
+                logger.LogWarning("{UserDiscordTag} ({UserId}) tried to execute {CommandType} command '{Command}', but errored with {ErrorType}: {ErrorMessage}'",
                     user.DiscordTag(), user.ID, type, command, error?.GetType().Name, error?.Message);
-                replyResult = await _feedbackService.SendContextualErrorAsync("An error occured while executing your command. Please try again later.", ct: ct);
+                replyResult = await feedbackService.SendContextualErrorAsync("An error occured while executing your command. Please try again later.", ct: ct);
                 break;
         }
 

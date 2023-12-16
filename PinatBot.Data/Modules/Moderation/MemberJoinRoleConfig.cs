@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace PinatBot.Data.Modules.Moderation;
 
-public class MemberJoinRoleConfig
+public class MemberJoinRoleConfig(ulong guildId)
 {
-    public MemberJoinRoleConfig(ulong guildId) => GuildId = guildId;
-
-    public ulong GuildId { get; }
+    public ulong GuildId { get; } = guildId;
     public bool Enabled { get; set; }
     public ulong RoleId { get; set; }
 }

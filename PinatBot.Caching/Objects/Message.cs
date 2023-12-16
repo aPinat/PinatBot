@@ -4,17 +4,11 @@ using Remora.Rest.Core;
 
 namespace PinatBot.Caching.Objects;
 
-public class Message : IMessageCreate
+public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
 {
-    public Message(Snowflake id, Snowflake channelID)
-    {
-        ID = id;
-        ChannelID = channelID;
-    }
+    public Snowflake ID { get; } = id;
 
-    public Snowflake ID { get; }
-
-    public Snowflake ChannelID { get; }
+    public Snowflake ChannelID { get; } = channelID;
 
     public Optional<Snowflake> GuildID { get; private set; }
 

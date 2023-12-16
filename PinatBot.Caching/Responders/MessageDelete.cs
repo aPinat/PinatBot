@@ -4,23 +4,14 @@ using Remora.Results;
 
 namespace PinatBot.Caching.Responders;
 
-public class MessageDelete : IResponder<IMessageDelete>
+public class MessageDelete(DiscordGatewayCache cache, DistributedCacheProvider distributedCacheProvider) : IResponder<IMessageDelete>
 {
-    private readonly DiscordGatewayCache _cache;
-    private readonly DistributedCacheProvider _distributedCacheProvider;
-
-    public MessageDelete(DiscordGatewayCache cache, DistributedCacheProvider distributedCacheProvider)
-    {
-        _cache = cache;
-        _distributedCacheProvider = distributedCacheProvider;
-    }
-
     public async Task<Result> RespondAsync(IMessageDelete m, CancellationToken ct = default)
     {
-        _cache.InternalMessages.TryRemove(m.ID.Value, out _);
+        cache.InternalMessages.TryRemove(m.ID.Value, out _);
 
         var key = DistributedCacheProvider.CreateMessageCacheKey(m.ChannelID, m.ID);
-        await _distributedCacheProvider.EvictAsync(key, ct);
+        await distributedCacheProvider.EvictAsync(key, ct);
 
         return Result.FromSuccess();
     }

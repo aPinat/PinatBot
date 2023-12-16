@@ -20,45 +20,35 @@ namespace PinatBot.Modules.Moderation.Commands;
 [DiscordDefaultDMPermission(false)]
 [RequireDiscordPermission(DiscordPermission.ManageRoles)]
 [RequireBotDiscordPermissions(DiscordPermission.ManageRoles)]
-public class MemberJoinRoleCommands : CommandGroup
+public class MemberJoinRoleCommands(IDbContextFactory<Database> dbContextFactory, ICommandContext commandContext, FeedbackService feedbackService)
+    : CommandGroup
 {
-    private readonly ICommandContext _commandContext;
-    private readonly IDbContextFactory<Database> _dbContextFactory;
-    private readonly FeedbackService _feedbackService;
-
-    public MemberJoinRoleCommands(IDbContextFactory<Database> dbContextFactory, ICommandContext commandContext, FeedbackService feedbackService)
-    {
-        _dbContextFactory = dbContextFactory;
-        _commandContext = commandContext;
-        _feedbackService = feedbackService;
-    }
-
     [Command("show", "get")]
     [Description("Assign role on member join.")]
     public async Task<IResult> GetJoinRoleAsync()
     {
-        if (!_commandContext.TryGetGuildID(out var guildId))
-            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
+        if (!commandContext.TryGetGuildID(out var guildId))
+            return await feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync();
+        await using var database = await dbContextFactory.CreateDbContextAsync();
         var joinRole = await database.MemberJoinRoleConfigs.AsNoTracking().FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value);
         if (joinRole is null)
-            return await _feedbackService.SendContextualInfoAsync("No role to assign on member join is set.");
+            return await feedbackService.SendContextualInfoAsync("No role to assign on member join is set.");
 
         if (joinRole.Enabled)
-            return await _feedbackService.SendContextualInfoAsync($"Role assigned on member join set to {new Snowflake(joinRole.RoleId).Mention(typeof(IRole))}.");
+            return await feedbackService.SendContextualInfoAsync($"Role assigned on member join set to {new Snowflake(joinRole.RoleId).Mention(typeof(IRole))}.");
 
-        return await _feedbackService.SendContextualInfoAsync("Role assigning on member join is disabled.");
+        return await feedbackService.SendContextualInfoAsync("Role assigning on member join is disabled.");
     }
 
     [Command("set")]
     [Description("Set role to assign on member join.")]
     public async Task<IResult> SetJoinRoleAsync([Description("Role to assign")] IRole role)
     {
-        if (!_commandContext.TryGetGuildID(out var guildId))
-            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
+        if (!commandContext.TryGetGuildID(out var guildId))
+            return await feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync();
+        await using var database = await dbContextFactory.CreateDbContextAsync();
         var joinRole = await database.MemberJoinRoleConfigs.FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value);
         if (joinRole is null)
         {
@@ -72,23 +62,23 @@ public class MemberJoinRoleCommands : CommandGroup
         }
 
         await database.SaveChangesAsync();
-        return await _feedbackService.SendContextualSuccessAsync($"Role assigned on member join set to {role.Mention()}.");
+        return await feedbackService.SendContextualSuccessAsync($"Role assigned on member join set to {role.Mention()}.");
     }
 
     [Command("disable", "off", "none")]
     [Description("Disable assigning role on member join.")]
     public async Task<IResult> DisableJoinRoleAsync()
     {
-        if (!_commandContext.TryGetGuildID(out var guildId))
-            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
+        if (!commandContext.TryGetGuildID(out var guildId))
+            return await feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync();
+        await using var database = await dbContextFactory.CreateDbContextAsync();
         var joinRole = await database.MemberJoinRoleConfigs.FirstOrDefaultAsync(joinRole => joinRole.GuildId == guildId.Value);
         if (joinRole is null)
-            return await _feedbackService.SendContextualErrorAsync("No role to assign on member join set.");
+            return await feedbackService.SendContextualErrorAsync("No role to assign on member join set.");
 
         joinRole.Enabled = false;
         await database.SaveChangesAsync();
-        return await _feedbackService.SendContextualSuccessAsync("Disabled assigning role on member join.");
+        return await feedbackService.SendContextualSuccessAsync("Disabled assigning role on member join.");
     }
 }

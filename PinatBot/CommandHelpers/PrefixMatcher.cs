@@ -5,29 +5,18 @@ using Remora.Results;
 
 namespace PinatBot.CommandHelpers;
 
-public class PrefixMatcher : ICommandPrefixMatcher
+public class PrefixMatcher(DiscordGatewayCache cache, Configuration configuration, IMessageContext messageContext) : ICommandPrefixMatcher
 {
-    private readonly DiscordGatewayCache _cache;
-    private readonly Configuration _configuration;
-    private readonly IMessageContext _messageContext;
-
-    public PrefixMatcher(DiscordGatewayCache cache, Configuration configuration, IMessageContext messageContext)
-    {
-        _cache = cache;
-        _configuration = configuration;
-        _messageContext = messageContext;
-    }
-
     public ValueTask<Result<(bool Matches, int ContentStartIndex)>> MatchesPrefixAsync(string content, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(content))
             goto FALSE;
 
-        var prefix = _configuration.Discord.Prefix;
+        var prefix = configuration.Discord.Prefix;
         if (content.StartsWith(prefix, StringComparison.Ordinal))
             return ValueTask.FromResult(Result<(bool Matches, int ContentStartIndex)>.FromSuccess((true, prefix.Length)));
 
-        var meResult = _cache.GetCurrentUser();
+        var meResult = cache.GetCurrentUser();
         if (!meResult.IsDefined(out var user))
             return ValueTask.FromResult(Result<(bool Matches, int ContentStartIndex)>.FromError(meResult));
 
@@ -35,7 +24,7 @@ public class PrefixMatcher : ICommandPrefixMatcher
         if (content.StartsWith(mention, StringComparison.Ordinal))
             return ValueTask.FromResult(Result<(bool Matches, int ContentStartIndex)>.FromSuccess((true, mention.Length)));
 
-        if (!_messageContext.GuildID.HasValue)
+        if (!messageContext.GuildID.HasValue)
             return ValueTask.FromResult(Result<(bool Matches, int ContentStartIndex)>.FromSuccess((true, 0)));
 
     FALSE:

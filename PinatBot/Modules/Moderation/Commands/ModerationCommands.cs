@@ -12,19 +12,8 @@ using Remora.Results;
 namespace PinatBot.Modules.Moderation.Commands;
 
 [DiscordDefaultDMPermission(false)]
-public class ModerationCommands : CommandGroup
+public class ModerationCommands(ICommandContext commandContext, FeedbackService feedbackService, Discord discord) : CommandGroup
 {
-    private readonly ICommandContext _commandContext;
-    private readonly Discord _discord;
-    private readonly FeedbackService _feedbackService;
-
-    public ModerationCommands(ICommandContext commandContext, FeedbackService feedbackService, Discord discord)
-    {
-        _commandContext = commandContext;
-        _feedbackService = feedbackService;
-        _discord = discord;
-    }
-
     [Command("purge")]
     [Description("Purge a number of messages in this channel.")]
     [DiscordDefaultMemberPermissions(DiscordPermission.ManageMessages)]
@@ -32,17 +21,17 @@ public class ModerationCommands : CommandGroup
     [RequireBotDiscordPermissions(DiscordPermission.ManageMessages)]
     public async Task<IResult> PurgeAsync([Description("Number of messages to purge")] int count)
     {
-        if (!_commandContext.TryGetChannelID(out var channelId))
+        if (!commandContext.TryGetChannelID(out var channelId))
             return Result.FromError(new InvalidOperationError("Could not get channel."));
 
-        await _feedbackService.SendContextualInfoAsync($"Purging {count} messages...");
-        var messagesResult = await _discord.Rest.Channel.GetChannelMessagesAsync(channelId, limit: count + 1);
+        await feedbackService.SendContextualInfoAsync($"Purging {count} messages...");
+        var messagesResult = await discord.Rest.Channel.GetChannelMessagesAsync(channelId, limit: count + 1);
         if (!messagesResult.IsDefined(out var messages))
             return Result.FromError(messagesResult);
 
         if (messages.Count == 1)
-            return await _discord.Rest.Channel.DeleteMessageAsync(channelId, messages[0].ID);
+            return await discord.Rest.Channel.DeleteMessageAsync(channelId, messages[0].ID);
 
-        return await _discord.Rest.Channel.BulkDeleteMessagesAsync(channelId, messages.Select(message => message.ID).ToArray());
+        return await discord.Rest.Channel.BulkDeleteMessagesAsync(channelId, messages.Select(message => message.ID).ToArray());
     }
 }

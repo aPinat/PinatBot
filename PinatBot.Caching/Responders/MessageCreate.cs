@@ -6,25 +6,16 @@ using Remora.Results;
 
 namespace PinatBot.Caching.Responders;
 
-public class MessageCreate : IResponder<IMessageCreate>
+public class MessageCreate(DiscordGatewayCache cache, DistributedCacheProvider distributedCacheProvider) : IResponder<IMessageCreate>
 {
-    private readonly DiscordGatewayCache _cache;
-    private readonly DistributedCacheProvider _distributedCacheProvider;
-
-    public MessageCreate(DiscordGatewayCache cache, DistributedCacheProvider distributedCacheProvider)
-    {
-        _cache = cache;
-        _distributedCacheProvider = distributedCacheProvider;
-    }
-
     public async Task<Result> RespondAsync(IMessageCreate m, CancellationToken ct = default)
     {
         var message = new Message(m.ID, m.ChannelID);
         message.Populate(m);
-        _cache.InternalMessages[m.ID.Value] = message;
+        cache.InternalMessages[m.ID.Value] = message;
 
         var key = DistributedCacheProvider.CreateMessageCacheKey(m.ChannelID, m.ID);
-        await _distributedCacheProvider.CacheAsync<IMessage>(key, message, ct);
+        await distributedCacheProvider.CacheAsync<IMessage>(key, message, ct);
 
         return Result.FromSuccess();
     }

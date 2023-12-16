@@ -4,18 +4,14 @@ using Remora.Results;
 
 namespace PinatBot.Caching.Responders;
 
-public class GuildScheduledEventUpdate : IResponder<IGuildScheduledEventUpdate>
+public class GuildScheduledEventUpdate(DiscordGatewayCache cache) : IResponder<IGuildScheduledEventUpdate>
 {
-    private readonly DiscordGatewayCache _cache;
-
-    public GuildScheduledEventUpdate(DiscordGatewayCache cache) => _cache = cache;
-
     public Task<Result> RespondAsync(IGuildScheduledEventUpdate e, CancellationToken ct = default)
     {
         if (e.Creator.IsDefined(out var user))
-            _cache.InternalUsers[user.ID.Value] = user;
+            cache.InternalUsers[user.ID.Value] = user;
 
-        _cache.InternalGuilds[e.GuildID.Value].GuildScheduledEventsInternal[e.ID.Value] = e;
+        cache.InternalGuilds[e.GuildID.Value].GuildScheduledEventsInternal[e.ID.Value] = e;
         return Task.FromResult(Result.FromSuccess());
     }
 }

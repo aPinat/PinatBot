@@ -4,12 +4,8 @@ using Remora.Results;
 
 namespace PinatBot.Caching.Responders;
 
-public class GuildMemberChunk : IResponder<IGuildMembersChunk>
+public class GuildMemberChunk(DiscordGatewayCache cache) : IResponder<IGuildMembersChunk>
 {
-    private readonly DiscordGatewayCache _cache;
-
-    public GuildMemberChunk(DiscordGatewayCache cache) => _cache = cache;
-
     public Task<Result> RespondAsync(IGuildMembersChunk m, CancellationToken ct = default)
     {
         foreach (var member in m.Members)
@@ -17,8 +13,8 @@ public class GuildMemberChunk : IResponder<IGuildMembersChunk>
             if (!member.User.IsDefined(out var user))
                 continue;
 
-            _cache.InternalGuilds[m.GuildID.Value].MembersInternal[user.ID.Value] = member;
-            _cache.InternalUsers[user.ID.Value] = user;
+            cache.InternalGuilds[m.GuildID.Value].MembersInternal[user.ID.Value] = member;
+            cache.InternalUsers[user.ID.Value] = user;
         }
 
         if (!m.Presences.IsDefined(out var presences))
@@ -29,7 +25,7 @@ public class GuildMemberChunk : IResponder<IGuildMembersChunk>
             if (!presence.User.ID.IsDefined(out var userID))
                 continue;
 
-            _cache.InternalGuilds[m.GuildID.Value].PresencesInternal[userID.Value] = presence;
+            cache.InternalGuilds[m.GuildID.Value].PresencesInternal[userID.Value] = presence;
         }
 
         return Task.FromResult(Result.FromSuccess());

@@ -3,12 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace PinatBot.Data.Modules.Moderation;
 
-public class VoiceStateLoggingConfig : LoggingConfig
-{
-    public VoiceStateLoggingConfig(ulong guildId) : base(guildId)
-    {
-    }
-}
+public class VoiceStateLoggingConfig(ulong guildId) : LoggingConfig(guildId);
 
 public class VoiceEventLoggingEntityConfiguration : IEntityTypeConfiguration<VoiceStateLoggingConfig>
 {

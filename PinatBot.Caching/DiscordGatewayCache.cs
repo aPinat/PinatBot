@@ -10,17 +10,13 @@ using Message = PinatBot.Caching.Objects.Message;
 
 namespace PinatBot.Caching;
 
-public class DiscordGatewayCache
+public class DiscordGatewayCache(DistributedCacheProvider distributedCacheProvider)
 {
-    private readonly DistributedCacheProvider _distributedCacheProvider;
-
     internal readonly ConcurrentDictionary<ulong, Guild> InternalGuilds = new();
 
     internal readonly ConcurrentDictionary<ulong, Message> InternalMessages = new();
 
     internal readonly ConcurrentDictionary<ulong, IUser> InternalUsers = new();
-
-    public DiscordGatewayCache(DistributedCacheProvider distributedCacheProvider) => _distributedCacheProvider = distributedCacheProvider;
 
     internal IUser? CurrentUser { get; set; }
 
@@ -45,7 +41,7 @@ public class DiscordGatewayCache
             return message;
 
         var key = DistributedCacheProvider.CreateMessageCacheKey(channelID, messageID);
-        var cachedMessageDistributed = await _distributedCacheProvider.RetrieveAsync<IMessage>(key, cancellationToken);
+        var cachedMessageDistributed = await distributedCacheProvider.RetrieveAsync<IMessage>(key, cancellationToken);
         return cachedMessageDistributed is null ? Result<IMessage>.FromError(new NotFoundError("Message not found in cache")) : Result<IMessage>.FromSuccess(cachedMessageDistributed);
     }
 
@@ -56,7 +52,7 @@ public class DiscordGatewayCache
         InternalMessages[message.ID.Value] = m;
 
         var key = DistributedCacheProvider.CreateMessageCacheKey(message.ChannelID, message.ID);
-        await _distributedCacheProvider.CacheAsync<IMessage>(key, m, cancellationToken);
+        await distributedCacheProvider.CacheAsync<IMessage>(key, m, cancellationToken);
     }
 
     public Result<IPartialVoiceState> GetVoiceState(Snowflake guildID, Snowflake userID) =>

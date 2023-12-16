@@ -3,10 +3,8 @@ using PinatBot.Data.Modules.Moderation;
 
 namespace PinatBot.Data;
 
-public class Database : DbContext
+public class Database(DbContextOptions options) : DbContext(options)
 {
-    public Database(DbContextOptions options) : base(options) { }
-
     public DbSet<GeneralLoggingConfig> GeneralLoggingConfigs => Set<GeneralLoggingConfig>();
     public DbSet<MemberJoinRoleConfig> MemberJoinRoleConfigs => Set<MemberJoinRoleConfig>();
     public DbSet<VoiceStateLoggingConfig> VoiceStateLoggingConfigs => Set<VoiceStateLoggingConfig>();

@@ -20,9 +20,9 @@ public partial class CachingDiscordRestGuildAPI
         Optional<Snowflake> systemChannelID = default,
         Optional<SystemChannelFlags> systemChannelFlags = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildAsync(name, icon, verificationLevel, defaultMessageNotifications, explicitContentFilter, roles, channels, afkChannelID, afkTimeout, systemChannelID, systemChannelFlags, ct);
+        actual.CreateGuildAsync(name, icon, verificationLevel, defaultMessageNotifications, explicitContentFilter, roles, channels, afkChannelID, afkTimeout, systemChannelID, systemChannelFlags, ct);
 
-    public Task<Result<IGuildPreview>> GetGuildPreviewAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildPreviewAsync(guildID, ct);
+    public Task<Result<IGuildPreview>> GetGuildPreviewAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildPreviewAsync(guildID, ct);
 
     public Task<Result<IGuild>> ModifyGuildAsync(Snowflake guildID,
         Optional<string> name = default,
@@ -47,10 +47,10 @@ public partial class CachingDiscordRestGuildAPI
         Optional<Snowflake?> safetyAlertsChannelID = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildAsync(guildID, name, verificationLevel, defaultMessageNotifications, explicitContentFilter, afkChannelID, afkTimeout, icon, ownerID, splash, discoverySplash, banner,
+        actual.ModifyGuildAsync(guildID, name, verificationLevel, defaultMessageNotifications, explicitContentFilter, afkChannelID, afkTimeout, icon, ownerID, splash, discoverySplash, banner,
             systemChannelID, systemChannelFlags, rulesChannelID, publicUpdatesChannelID, preferredLocale, features, description, isPremiumProgressBarEnabled, safetyAlertsChannelID, reason, ct);
 
-    public Task<Result> DeleteGuildAsync(Snowflake guildID, CancellationToken ct = default) => _actual.DeleteGuildAsync(guildID, ct);
+    public Task<Result> DeleteGuildAsync(Snowflake guildID, CancellationToken ct = default) => actual.DeleteGuildAsync(guildID, ct);
 
     public Task<Result<IChannel>> CreateGuildChannelAsync(Snowflake guildID,
         string name,
@@ -72,7 +72,7 @@ public partial class CachingDiscordRestGuildAPI
         Optional<ForumLayout?> defaultForumLayout = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildChannelAsync(guildID, name, type, topic, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode,
+        actual.CreateGuildChannelAsync(guildID, name, type, topic, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode,
             defaultAutoArchiveDuration, defaultReactionEmoji, availableTags, defaultSortOrder, defaultForumLayout, reason, ct);
 
     public Task<Result<IChannel>> CreateGuildTextChannelAsync(Snowflake guildID,
@@ -86,7 +86,7 @@ public partial class CachingDiscordRestGuildAPI
         Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildTextChannelAsync(guildID, name, topic, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, reason, ct);
+        actual.CreateGuildTextChannelAsync(guildID, name, topic, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, reason, ct);
 
     public Task<Result<IChannel>> CreateGuildAnnouncementChannelAsync(Snowflake guildID,
         string name,
@@ -98,7 +98,7 @@ public partial class CachingDiscordRestGuildAPI
         Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildAnnouncementChannelAsync(guildID, name, bitrate, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, reason, ct);
+        actual.CreateGuildAnnouncementChannelAsync(guildID, name, bitrate, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, reason, ct);
 
     public Task<Result<IChannel>> CreateGuildForumChannelAsync(Snowflake guildID,
         string name,
@@ -114,7 +114,7 @@ public partial class CachingDiscordRestGuildAPI
         Optional<ForumLayout?> defaultForumLayout = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildForumChannelAsync(guildID, name, topic, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, defaultReactionEmoji, availableTags, defaultSortOrder,
+        actual.CreateGuildForumChannelAsync(guildID, name, topic, position, permissionOverwrites, parentID, isNsfw, defaultAutoArchiveDuration, defaultReactionEmoji, availableTags, defaultSortOrder,
             defaultForumLayout, reason, ct);
 
     public Task<Result<IChannel>> CreateGuildVoiceChannelAsync(Snowflake guildID,
@@ -130,7 +130,7 @@ public partial class CachingDiscordRestGuildAPI
         Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildVoiceChannelAsync(guildID, name, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode, reason, ct);
+        actual.CreateGuildVoiceChannelAsync(guildID, name, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode, reason, ct);
 
     public Task<Result<IChannel>> CreateGuildStageChannelAsync(Snowflake guildID,
         string name,
@@ -145,13 +145,13 @@ public partial class CachingDiscordRestGuildAPI
         Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildStageChannelAsync(guildID, name, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode, reason, ct);
+        actual.CreateGuildStageChannelAsync(guildID, name, bitrate, userLimit, rateLimitPerUser, position, permissionOverwrites, parentID, isNsfw, rtcRegion, videoQualityMode, reason, ct);
 
     public Task<Result> ModifyGuildChannelPositionsAsync(Snowflake guildID,
         IReadOnlyList<(Snowflake ChannelID, int? Position, bool? LockPermissions, Snowflake? ParentID)> positionModifications,
-        CancellationToken ct = default) => _actual.ModifyGuildChannelPositionsAsync(guildID, positionModifications, ct);
+        CancellationToken ct = default) => actual.ModifyGuildChannelPositionsAsync(guildID, positionModifications, ct);
 
-    public Task<Result<IGuildThreadQueryResponse>> ListActiveGuildThreadsAsync(Snowflake guildID, CancellationToken ct = default) => _actual.ListActiveGuildThreadsAsync(guildID, ct);
+    public Task<Result<IGuildThreadQueryResponse>> ListActiveGuildThreadsAsync(Snowflake guildID, CancellationToken ct = default) => actual.ListActiveGuildThreadsAsync(guildID, ct);
 
     public Task<Result<IGuildMember?>> AddGuildMemberAsync(Snowflake guildID,
         Snowflake userID,
@@ -161,7 +161,7 @@ public partial class CachingDiscordRestGuildAPI
         Optional<bool> isMuted = default,
         Optional<bool> isDeafened = default,
         CancellationToken ct = default) =>
-        _actual.AddGuildMemberAsync(guildID, userID, accessToken, nickname, roles, isMuted, isDeafened, ct);
+        actual.AddGuildMemberAsync(guildID, userID, accessToken, nickname, roles, isMuted, isDeafened, ct);
 
     public Task<Result> ModifyGuildMemberAsync(Snowflake guildID,
         Snowflake userID,
@@ -174,33 +174,33 @@ public partial class CachingDiscordRestGuildAPI
         Optional<GuildMemberFlags> flags = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildMemberAsync(guildID, userID, nickname, roles, isMuted, isDeafened, channelID, communicationDisabledUntil, flags, reason, ct);
+        actual.ModifyGuildMemberAsync(guildID, userID, nickname, roles, isMuted, isDeafened, channelID, communicationDisabledUntil, flags, reason, ct);
 
     public Task<Result<IGuildMember>> ModifyCurrentMemberAsync(Snowflake guildID, Optional<string?> nickname = default, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.ModifyCurrentMemberAsync(guildID, nickname, reason, ct);
+        actual.ModifyCurrentMemberAsync(guildID, nickname, reason, ct);
 
     public Task<Result> AddGuildMemberRoleAsync(Snowflake guildID, Snowflake userID, Snowflake roleID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.AddGuildMemberRoleAsync(guildID, userID, roleID, reason, ct);
+        actual.AddGuildMemberRoleAsync(guildID, userID, roleID, reason, ct);
 
     public Task<Result> RemoveGuildMemberRoleAsync(Snowflake guildID, Snowflake userID, Snowflake roleID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.RemoveGuildMemberRoleAsync(guildID, userID, roleID, reason, ct);
+        actual.RemoveGuildMemberRoleAsync(guildID, userID, roleID, reason, ct);
 
     public Task<Result> RemoveGuildMemberAsync(Snowflake guildID, Snowflake userID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.RemoveGuildMemberAsync(guildID, userID, reason, ct);
+        actual.RemoveGuildMemberAsync(guildID, userID, reason, ct);
 
     public Task<Result<IReadOnlyList<IBan>>> GetGuildBansAsync(Snowflake guildID,
         Optional<int> limit = default,
         Optional<Snowflake> before = default,
         Optional<Snowflake> after = default,
-        CancellationToken ct = default) => _actual.GetGuildBansAsync(guildID, limit, before, after, ct);
+        CancellationToken ct = default) => actual.GetGuildBansAsync(guildID, limit, before, after, ct);
 
-    public Task<Result<IBan>> GetGuildBanAsync(Snowflake guildID, Snowflake userID, CancellationToken ct = default) => _actual.GetGuildBanAsync(guildID, userID, ct);
+    public Task<Result<IBan>> GetGuildBanAsync(Snowflake guildID, Snowflake userID, CancellationToken ct = default) => actual.GetGuildBanAsync(guildID, userID, ct);
 
     public Task<Result> CreateGuildBanAsync(Snowflake guildID, Snowflake userID, Optional<int> deleteMessageDays = default, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.CreateGuildBanAsync(guildID, userID, deleteMessageDays, reason, ct);
+        actual.CreateGuildBanAsync(guildID, userID, deleteMessageDays, reason, ct);
 
     public Task<Result> RemoveGuildBanAsync(Snowflake guildID, Snowflake userID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.RemoveGuildBanAsync(guildID, userID, reason, ct);
+        actual.RemoveGuildBanAsync(guildID, userID, reason, ct);
 
     public Task<Result<IRole>> CreateGuildRoleAsync(Snowflake guildID,
         Optional<string> name = default,
@@ -212,12 +212,12 @@ public partial class CachingDiscordRestGuildAPI
         Optional<bool> isMentionable = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateGuildRoleAsync(guildID, name, permissions, colour, isHoisted, icon, unicodeEmoji, isMentionable, reason, ct);
+        actual.CreateGuildRoleAsync(guildID, name, permissions, colour, isHoisted, icon, unicodeEmoji, isMentionable, reason, ct);
 
     public Task<Result<IReadOnlyList<IRole>>> ModifyGuildRolePositionsAsync(Snowflake guildID,
         IReadOnlyList<(Snowflake RoleID, Optional<int?> Position)> modifiedPositions,
         Optional<string> reason = default,
-        CancellationToken ct = default) => _actual.ModifyGuildRolePositionsAsync(guildID, modifiedPositions, reason, ct);
+        CancellationToken ct = default) => actual.ModifyGuildRolePositionsAsync(guildID, modifiedPositions, reason, ct);
 
     public Task<Result<IRole>> ModifyGuildRoleAsync(Snowflake guildID,
         Snowflake roleID,
@@ -230,20 +230,20 @@ public partial class CachingDiscordRestGuildAPI
         Optional<bool?> isMentionable = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildRoleAsync(guildID, roleID, name, permissions, color, isHoisted, icon, unicodeEmoji, isMentionable, reason, ct);
+        actual.ModifyGuildRoleAsync(guildID, roleID, name, permissions, color, isHoisted, icon, unicodeEmoji, isMentionable, reason, ct);
 
     public Task<Result<MultiFactorAuthenticationLevel>> ModifyGuildMFALevelAsync(Snowflake guildID,
         MultiFactorAuthenticationLevel level,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildMFALevelAsync(guildID, level, reason, ct);
+        actual.ModifyGuildMFALevelAsync(guildID, level, reason, ct);
 
     public Task<Result> DeleteGuildRoleAsync(Snowflake guildID, Snowflake roleID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.DeleteGuildRoleAsync(guildID, roleID, reason, ct);
+        actual.DeleteGuildRoleAsync(guildID, roleID, reason, ct);
 
     public Task<Result<IPruneCount>>
         GetGuildPruneCountAsync(Snowflake guildID, Optional<int> days = default, Optional<IReadOnlyList<Snowflake>> includeRoles = default, CancellationToken ct = default) =>
-        _actual.GetGuildPruneCountAsync(guildID, days, includeRoles, ct);
+        actual.GetGuildPruneCountAsync(guildID, days, includeRoles, ct);
 
     public Task<Result<IPruneCount>> BeginGuildPruneAsync(Snowflake guildID,
         Optional<int> days = default,
@@ -251,34 +251,34 @@ public partial class CachingDiscordRestGuildAPI
         Optional<IReadOnlyList<Snowflake>> includeRoles = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.BeginGuildPruneAsync(guildID, days, computePruneCount, includeRoles, reason, ct);
+        actual.BeginGuildPruneAsync(guildID, days, computePruneCount, includeRoles, reason, ct);
 
-    public Task<Result<IReadOnlyList<IVoiceRegion>>> GetGuildVoiceRegionsAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildVoiceRegionsAsync(guildID, ct);
+    public Task<Result<IReadOnlyList<IVoiceRegion>>> GetGuildVoiceRegionsAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildVoiceRegionsAsync(guildID, ct);
 
-    public Task<Result<IReadOnlyList<IInvite>>> GetGuildInvitesAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildInvitesAsync(guildID, ct);
+    public Task<Result<IReadOnlyList<IInvite>>> GetGuildInvitesAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildInvitesAsync(guildID, ct);
 
-    public Task<Result<IReadOnlyList<IIntegration>>> GetGuildIntegrationsAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildIntegrationsAsync(guildID, ct);
+    public Task<Result<IReadOnlyList<IIntegration>>> GetGuildIntegrationsAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildIntegrationsAsync(guildID, ct);
 
     public Task<Result> DeleteGuildIntegrationAsync(Snowflake guildID, Snowflake integrationID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.DeleteGuildIntegrationAsync(guildID, integrationID, reason, ct);
+        actual.DeleteGuildIntegrationAsync(guildID, integrationID, reason, ct);
 
-    public Task<Result<IGuildWidgetSettings>> GetGuildWidgetSettingsAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildWidgetSettingsAsync(guildID, ct);
+    public Task<Result<IGuildWidgetSettings>> GetGuildWidgetSettingsAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildWidgetSettingsAsync(guildID, ct);
 
     public Task<Result<IGuildWidgetSettings>> ModifyGuildWidgetAsync(Snowflake guildID,
         Optional<bool> isEnabled = default,
         Optional<Snowflake?> channelID = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildWidgetAsync(guildID, isEnabled, channelID, reason, ct);
+        actual.ModifyGuildWidgetAsync(guildID, isEnabled, channelID, reason, ct);
 
-    public Task<Result<IGuildWidget>> GetGuildWidgetAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildWidgetAsync(guildID, ct);
+    public Task<Result<IGuildWidget>> GetGuildWidgetAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildWidgetAsync(guildID, ct);
 
-    public Task<Result<IPartialInvite>> GetGuildVanityUrlAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildVanityUrlAsync(guildID, ct);
+    public Task<Result<IPartialInvite>> GetGuildVanityUrlAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildVanityUrlAsync(guildID, ct);
 
     public Task<Result<Stream>> GetGuildWidgetImageAsync(Snowflake guildID, Optional<WidgetImageStyle> style = default, CancellationToken ct = default) =>
-        _actual.GetGuildWidgetImageAsync(guildID, style, ct);
+        actual.GetGuildWidgetImageAsync(guildID, style, ct);
 
-    public Task<Result<IWelcomeScreen>> GetGuildWelcomeScreenAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildWelcomeScreenAsync(guildID, ct);
+    public Task<Result<IWelcomeScreen>> GetGuildWelcomeScreenAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildWelcomeScreenAsync(guildID, ct);
 
     public Task<Result<IWelcomeScreen>> ModifyGuildWelcomeScreenAsync(Snowflake guildID,
         Optional<bool?> isEnabled = default,
@@ -286,9 +286,9 @@ public partial class CachingDiscordRestGuildAPI
         Optional<string?> description = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildWelcomeScreenAsync(guildID, isEnabled, welcomeChannels, description, reason, ct);
+        actual.ModifyGuildWelcomeScreenAsync(guildID, isEnabled, welcomeChannels, description, reason, ct);
 
-    public Task<Result<IGuildOnboarding>> GetGuildOnboardingAsync(Snowflake guildID, CancellationToken ct = default) => _actual.GetGuildOnboardingAsync(guildID, ct);
+    public Task<Result<IGuildOnboarding>> GetGuildOnboardingAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildOnboardingAsync(guildID, ct);
 
     public Task<Result<IGuildOnboarding>> ModifyGuildOnboardingAsync(Snowflake guildID,
         IReadOnlyList<IOnboardingPrompt> prompts,
@@ -297,29 +297,29 @@ public partial class CachingDiscordRestGuildAPI
         GuildOnboardingMode mode,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildOnboardingAsync(guildID, prompts, defaultChannelIDs, isEnabled, mode, reason, ct);
+        actual.ModifyGuildOnboardingAsync(guildID, prompts, defaultChannelIDs, isEnabled, mode, reason, ct);
 
     public Task<Result> ModifyCurrentUserVoiceStateAsync(Snowflake guildID,
         Snowflake channelID,
         Optional<bool> suppress = default,
         Optional<DateTimeOffset?> requestToSpeakTimestamp = default,
         CancellationToken ct = default) =>
-        _actual.ModifyCurrentUserVoiceStateAsync(guildID, channelID, suppress, requestToSpeakTimestamp, ct);
+        actual.ModifyCurrentUserVoiceStateAsync(guildID, channelID, suppress, requestToSpeakTimestamp, ct);
 
     public Task<Result<IVoiceState>> ModifyUserVoiceStateAsync(Snowflake guildID,
         Snowflake userID,
         Snowflake? channelID = default,
         Optional<bool> suppress = default,
         CancellationToken ct = default) =>
-        _actual.ModifyUserVoiceStateAsync(guildID, userID, channelID, suppress, ct);
+        actual.ModifyUserVoiceStateAsync(guildID, userID, channelID, suppress, ct);
 
     public RestRequestCustomization WithCustomization(Action<RestRequestBuilder> requestCustomizer)
     {
-        if (_actual is not IRestCustomizable customizable)
+        if (actual is not IRestCustomizable customizable)
             throw new NotImplementedException("Decorated type is not IRestCustomizable.");
 
         return customizable.WithCustomization(requestCustomizer);
     }
 
-    public void RemoveCustomization(RestRequestCustomization customization) => (_actual as IRestCustomizable)?.RemoveCustomization(customization);
+    public void RemoveCustomization(RestRequestCustomization customization) => (actual as IRestCustomizable)?.RemoveCustomization(customization);
 }

@@ -8,27 +8,18 @@ using Remora.Results;
 
 namespace PinatBot.Modules.Moderation;
 
-public class VoiceStateLoggingService
+public class VoiceStateLoggingService(IDbContextFactory<Database> dbContextFactory, Discord discord)
 {
-    private readonly IDbContextFactory<Database> _dbContextFactory;
-    private readonly Discord _discord;
-
-    public VoiceStateLoggingService(IDbContextFactory<Database> dbContextFactory, Discord discord)
-    {
-        _dbContextFactory = dbContextFactory;
-        _discord = discord;
-    }
-
     internal async Task<Result> LogVoiceStateUpdateAsync(IVoiceStateUpdate vsu, CancellationToken cancellationToken)
     {
         if (!vsu.GuildID.IsDefined(out var guildId) || !vsu.Member.IsDefined(out var member) || !member.User.IsDefined(out var user) || (user.IsBot.IsDefined(out var isBot) && isBot))
             return Result.FromSuccess();
 
-        var cacheResult = _discord.GatewayCache.GetVoiceState(guildId, vsu.UserID);
+        var cacheResult = discord.GatewayCache.GetVoiceState(guildId, vsu.UserID);
         if (cacheResult.IsDefined(out var oldVoiceState) && oldVoiceState.ChannelID.IsDefined(out var channelID) && channelID == vsu.ChannelID)
             return Result.FromSuccess();
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var database = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         var logging = database.VoiceStateLoggingConfigs.AsNoTracking().FirstOrDefault(config => config.GuildId == guildId.Value);
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
@@ -40,7 +31,7 @@ public class VoiceStateLoggingService
 
         if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.Value.HasValue is null or false)
         {
-            var channelResult = _discord.GatewayCache.GetChannel(guildId, vsu.ChannelID.Value);
+            var channelResult = discord.GatewayCache.GetChannel(guildId, vsu.ChannelID.Value);
             if (!channelResult.IsDefined(out var channel))
                 return Result.FromError(channelResult);
 
@@ -49,7 +40,7 @@ public class VoiceStateLoggingService
         }
         else if (!vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id) is true && id.HasValue)
         {
-            var channelResult = _discord.GatewayCache.GetChannel(guildId, id.Value);
+            var channelResult = discord.GatewayCache.GetChannel(guildId, id.Value);
             if (!channelResult.IsDefined(out var channel))
                 return Result.FromError(channelResult);
 
@@ -58,11 +49,11 @@ public class VoiceStateLoggingService
         }
         else if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id2) is true && id2.HasValue)
         {
-            var oldChannelResult = _discord.GatewayCache.GetChannel(guildId, id2.Value);
+            var oldChannelResult = discord.GatewayCache.GetChannel(guildId, id2.Value);
             if (!oldChannelResult.IsDefined(out var oldChannel))
                 return Result.FromError(oldChannelResult);
 
-            var newChannelResult = _discord.GatewayCache.GetChannel(guildId, vsu.ChannelID.Value);
+            var newChannelResult = discord.GatewayCache.GetChannel(guildId, vsu.ChannelID.Value);
             if (!newChannelResult.IsDefined(out var newChannel))
                 return Result.FromError(newChannelResult);
 
@@ -78,7 +69,7 @@ public class VoiceStateLoggingService
         if (!buildResult.IsDefined(out var embed))
             return Result.FromError(buildResult);
 
-        var messageResult = await _discord.Rest.Channel.CreateMessageAsync(new Snowflake(logging.ChannelId), embeds: new[] { embed }, ct: cancellationToken);
+        var messageResult = await discord.Rest.Channel.CreateMessageAsync(new Snowflake(logging.ChannelId), embeds: new[] { embed }, ct: cancellationToken);
         return messageResult.IsSuccess ? Result.FromSuccess() : Result.FromError(messageResult);
     }
 }

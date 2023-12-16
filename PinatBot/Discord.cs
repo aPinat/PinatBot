@@ -6,10 +6,33 @@ using Remora.Discord.Gateway;
 
 namespace PinatBot;
 
-public class Discord
+public class Discord(
+    DiscordGatewayClient gatewayClient,
+    IOptionsMonitor<JsonSerializerOptions> jsonOptions,
+    IDiscordRestApplicationAPI application,
+    IDiscordRestAuditLogAPI auditLog,
+    IDiscordRestChannelAPI channel,
+    IDiscordRestEmojiAPI emoji,
+    IDiscordRestGatewayAPI gateway,
+    IDiscordRestGuildAPI guild,
+    IDiscordRestGuildScheduledEventAPI guildScheduledEvent,
+    IDiscordRestInteractionAPI interaction,
+    IDiscordRestInviteAPI invite,
+    IDiscordRestOAuth2API oAuth2,
+    IDiscordRestStageInstanceAPI stageInstance,
+    IDiscordRestStickerAPI sticker,
+    IDiscordRestTemplateAPI template,
+    IDiscordRestUserAPI user,
+    IDiscordRestVoiceAPI voice,
+    IDiscordRestWebhookAPI webhook,
+    DiscordGatewayCache gatewayCache)
 {
-    public Discord(DiscordGatewayClient gatewayClient,
-        IOptionsMonitor<JsonSerializerOptions> jsonOptions,
+    public DiscordGatewayClient GatewayClient { get; } = gatewayClient;
+    public JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions(jsonOptions.Get("Discord")) { WriteIndented = true };
+    public DiscordRest Rest { get; } = new(application, auditLog, channel, emoji, gateway, guild, guildScheduledEvent, interaction, invite, oAuth2, stageInstance, sticker, template, user, voice, webhook);
+    public DiscordGatewayCache GatewayCache { get; } = gatewayCache;
+
+    public class DiscordRest(
         IDiscordRestApplicationAPI application,
         IDiscordRestAuditLogAPI auditLog,
         IDiscordRestChannelAPI channel,
@@ -25,72 +48,23 @@ public class Discord
         IDiscordRestTemplateAPI template,
         IDiscordRestUserAPI user,
         IDiscordRestVoiceAPI voice,
-        IDiscordRestWebhookAPI webhook,
-        DiscordGatewayCache gatewayCache)
+        IDiscordRestWebhookAPI webhook)
     {
-        GatewayClient = gatewayClient;
-        JsonSerializerOptions = new JsonSerializerOptions(jsonOptions.Get("Discord")) { WriteIndented = true };
-        Rest = new DiscordRest(application, auditLog, channel, emoji, gateway, guild, guildScheduledEvent, interaction, invite, oAuth2, stageInstance, sticker, template, user, voice, webhook);
-        GatewayCache = gatewayCache;
-    }
-
-    public DiscordGatewayClient GatewayClient { get; }
-    public JsonSerializerOptions JsonSerializerOptions { get; }
-    public DiscordRest Rest { get; }
-    public DiscordGatewayCache GatewayCache { get; }
-
-    public class DiscordRest
-    {
-        public DiscordRest(IDiscordRestApplicationAPI application,
-            IDiscordRestAuditLogAPI auditLog,
-            IDiscordRestChannelAPI channel,
-            IDiscordRestEmojiAPI emoji,
-            IDiscordRestGatewayAPI gateway,
-            IDiscordRestGuildAPI guild,
-            IDiscordRestGuildScheduledEventAPI guildScheduledEvent,
-            IDiscordRestInteractionAPI interaction,
-            IDiscordRestInviteAPI invite,
-            IDiscordRestOAuth2API oAuth2,
-            IDiscordRestStageInstanceAPI stageInstance,
-            IDiscordRestStickerAPI sticker,
-            IDiscordRestTemplateAPI template,
-            IDiscordRestUserAPI user,
-            IDiscordRestVoiceAPI voice,
-            IDiscordRestWebhookAPI webhook)
-        {
-            Application = application;
-            AuditLog = auditLog;
-            Channel = channel;
-            Emoji = emoji;
-            Gateway = gateway;
-            Guild = guild;
-            GuildScheduledEvent = guildScheduledEvent;
-            Interaction = interaction;
-            Invite = invite;
-            OAuth2 = oAuth2;
-            StageInstance = stageInstance;
-            Sticker = sticker;
-            Template = template;
-            User = user;
-            Voice = voice;
-            Webhook = webhook;
-        }
-
-        public IDiscordRestApplicationAPI Application { get; }
-        public IDiscordRestAuditLogAPI AuditLog { get; }
-        public IDiscordRestChannelAPI Channel { get; }
-        public IDiscordRestEmojiAPI Emoji { get; }
-        public IDiscordRestGatewayAPI Gateway { get; }
-        public IDiscordRestGuildAPI Guild { get; }
-        public IDiscordRestGuildScheduledEventAPI GuildScheduledEvent { get; }
-        public IDiscordRestInteractionAPI Interaction { get; }
-        public IDiscordRestInviteAPI Invite { get; }
-        public IDiscordRestOAuth2API OAuth2 { get; }
-        public IDiscordRestStageInstanceAPI StageInstance { get; }
-        public IDiscordRestStickerAPI Sticker { get; }
-        public IDiscordRestTemplateAPI Template { get; }
-        public IDiscordRestUserAPI User { get; }
-        public IDiscordRestVoiceAPI Voice { get; }
-        public IDiscordRestWebhookAPI Webhook { get; }
+        public IDiscordRestApplicationAPI Application { get; } = application;
+        public IDiscordRestAuditLogAPI AuditLog { get; } = auditLog;
+        public IDiscordRestChannelAPI Channel { get; } = channel;
+        public IDiscordRestEmojiAPI Emoji { get; } = emoji;
+        public IDiscordRestGatewayAPI Gateway { get; } = gateway;
+        public IDiscordRestGuildAPI Guild { get; } = guild;
+        public IDiscordRestGuildScheduledEventAPI GuildScheduledEvent { get; } = guildScheduledEvent;
+        public IDiscordRestInteractionAPI Interaction { get; } = interaction;
+        public IDiscordRestInviteAPI Invite { get; } = invite;
+        public IDiscordRestOAuth2API OAuth2 { get; } = oAuth2;
+        public IDiscordRestStageInstanceAPI StageInstance { get; } = stageInstance;
+        public IDiscordRestStickerAPI Sticker { get; } = sticker;
+        public IDiscordRestTemplateAPI Template { get; } = template;
+        public IDiscordRestUserAPI User { get; } = user;
+        public IDiscordRestVoiceAPI Voice { get; } = voice;
+        public IDiscordRestWebhookAPI Webhook { get; } = webhook;
     }
 }

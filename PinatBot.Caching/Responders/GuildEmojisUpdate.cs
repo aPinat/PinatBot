@@ -4,15 +4,11 @@ using Remora.Results;
 
 namespace PinatBot.Caching.Responders;
 
-public class GuildEmojisUpdate : IResponder<IGuildEmojisUpdate>
+public class GuildEmojisUpdate(DiscordGatewayCache cache) : IResponder<IGuildEmojisUpdate>
 {
-    private readonly DiscordGatewayCache _cache;
-
-    public GuildEmojisUpdate(DiscordGatewayCache cache) => _cache = cache;
-
     public Task<Result> RespondAsync(IGuildEmojisUpdate e, CancellationToken ct = default)
     {
-        var emojis = _cache.InternalGuilds[e.GuildID.Value].EmojisInternal;
+        var emojis = cache.InternalGuilds[e.GuildID.Value].EmojisInternal;
         emojis.Clear();
         foreach (var emoji in e.Emojis)
         {

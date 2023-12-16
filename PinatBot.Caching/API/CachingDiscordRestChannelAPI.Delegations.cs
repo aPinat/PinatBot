@@ -37,12 +37,12 @@ public partial class CachingDiscordRestChannelAPI
         Optional<ForumLayout> defaultForumLayout = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyChannelAsync(channelID, name, icon, type, position, topic, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, videoQualityMode, isArchived,
+        actual.ModifyChannelAsync(channelID, name, icon, type, position, topic, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, videoQualityMode, isArchived,
             autoArchiveDuration, isLocked, isInvitable, defaultAutoArchiveDuration, rtcRegion, flags, availableTags, defaultReactionEmoji, defaultThreadRateLimitPerUser, appliedTags, defaultSortOrder,
             defaultForumLayout, reason, ct);
 
     public Task<Result<IChannel>> ModifyGroupDMChannelAsync(Snowflake channelID, Optional<string> name = default, Optional<Stream> icon = default, CancellationToken ct = default) =>
-        _actual.ModifyGroupDMChannelAsync(channelID, name, icon, ct);
+        actual.ModifyGroupDMChannelAsync(channelID, name, icon, ct);
 
     public Task<Result<IChannel>> ModifyGuildTextChannelAsync(Snowflake channelID,
         Optional<string> name = default,
@@ -56,7 +56,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildTextChannelAsync(channelID, name, type, position, topic, isNsfw, rateLimitPerUser, permissionOverwrites, parentID, defaultAutoArchiveDuration, reason, ct);
+        actual.ModifyGuildTextChannelAsync(channelID, name, type, position, topic, isNsfw, rateLimitPerUser, permissionOverwrites, parentID, defaultAutoArchiveDuration, reason, ct);
 
     public Task<Result<IChannel>> ModifyGuildVoiceChannelAsync(Snowflake channelID,
         Optional<string> name = default,
@@ -71,7 +71,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildVoiceChannelAsync(channelID, name, position, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
+        actual.ModifyGuildVoiceChannelAsync(channelID, name, position, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
 
     public Task<Result<IChannel>> ModifyGuildStageChannelAsync(Snowflake channelID,
         Optional<string> name = default,
@@ -86,7 +86,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<VideoQualityMode?> videoQualityMode = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildStageChannelAsync(channelID, name, position, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
+        actual.ModifyGuildStageChannelAsync(channelID, name, position, isNsfw, rateLimitPerUser, bitrate, userLimit, permissionOverwrites, parentID, rtcRegion, videoQualityMode, reason, ct);
 
     public Task<Result<IChannel>> ModifyGuildAnnouncementChannelAsync(Snowflake channelID,
         Optional<string> name = default,
@@ -99,7 +99,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyGuildAnnouncementChannelAsync(channelID, name, type, position, topic, isNsfw, permissionOverwrites, parentID, defaultAutoArchiveDuration, reason, ct);
+        actual.ModifyGuildAnnouncementChannelAsync(channelID, name, type, position, topic, isNsfw, permissionOverwrites, parentID, defaultAutoArchiveDuration, reason, ct);
 
     public Task<Result<IChannel>> ModifyThreadChannelAsync(Snowflake channelID,
         Optional<string> name = default,
@@ -112,7 +112,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<IReadOnlyList<Snowflake>> appliedTags = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyThreadChannelAsync(channelID, name, isArchived, autoArchiveDuration, isLocked, isInvitable, rateLimitPerUser, flags, appliedTags, reason, ct);
+        actual.ModifyThreadChannelAsync(channelID, name, isArchived, autoArchiveDuration, isLocked, isInvitable, rateLimitPerUser, flags, appliedTags, reason, ct);
 
     public Task<Result<IChannel>> ModifyForumChannelAsync(Snowflake channelID,
         Optional<string> name = default,
@@ -131,10 +131,10 @@ public partial class CachingDiscordRestChannelAPI
         Optional<ForumLayout> defaultForumLayout = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.ModifyForumChannelAsync(channelID, name, position, topic, isNsfw, rateLimitPerUser, permissionOverwrites, parentID, defaultAutoArchiveDuration, flags, availableTags,
+        actual.ModifyForumChannelAsync(channelID, name, position, topic, isNsfw, rateLimitPerUser, permissionOverwrites, parentID, defaultAutoArchiveDuration, flags, availableTags,
             defaultReactionEmoji, defaultThreadRateLimitPerUser, defaultSortOrder, defaultForumLayout, reason, ct);
 
-    public Task<Result> DeleteChannelAsync(Snowflake channelID, Optional<string> reason = default, CancellationToken ct = default) => _actual.DeleteChannelAsync(channelID, reason, ct);
+    public Task<Result> DeleteChannelAsync(Snowflake channelID, Optional<string> reason = default, CancellationToken ct = default) => actual.DeleteChannelAsync(channelID, reason, ct);
 
     public Task<Result<IMessage>> CreateMessageAsync(Snowflake channelID,
         Optional<string> content = default,
@@ -148,29 +148,29 @@ public partial class CachingDiscordRestChannelAPI
         Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
         Optional<MessageFlags> flags = default,
         CancellationToken ct = default) =>
-        _actual.CreateMessageAsync(channelID, content, nonce, isTTS, embeds, allowedMentions, messageReference, components, stickerIDs, attachments, flags, ct);
+        actual.CreateMessageAsync(channelID, content, nonce, isTTS, embeds, allowedMentions, messageReference, components, stickerIDs, attachments, flags, ct);
 
-    public Task<Result<IMessage>> CrosspostMessageAsync(Snowflake channelID, Snowflake messageID, CancellationToken ct = default) => _actual.CrosspostMessageAsync(channelID, messageID, ct);
+    public Task<Result<IMessage>> CrosspostMessageAsync(Snowflake channelID, Snowflake messageID, CancellationToken ct = default) => actual.CrosspostMessageAsync(channelID, messageID, ct);
 
-    public Task<Result> CreateReactionAsync(Snowflake channelID, Snowflake messageID, string emoji, CancellationToken ct = default) => _actual.CreateReactionAsync(channelID, messageID, emoji, ct);
+    public Task<Result> CreateReactionAsync(Snowflake channelID, Snowflake messageID, string emoji, CancellationToken ct = default) => actual.CreateReactionAsync(channelID, messageID, emoji, ct);
 
     public Task<Result> DeleteOwnReactionAsync(Snowflake channelID, Snowflake messageID, string emoji, CancellationToken ct = default) =>
-        _actual.DeleteOwnReactionAsync(channelID, messageID, emoji, ct);
+        actual.DeleteOwnReactionAsync(channelID, messageID, emoji, ct);
 
     public Task<Result> DeleteUserReactionAsync(Snowflake channelID, Snowflake messageID, string emoji, Snowflake user, CancellationToken ct = default) =>
-        _actual.DeleteUserReactionAsync(channelID, messageID, emoji, user, ct);
+        actual.DeleteUserReactionAsync(channelID, messageID, emoji, user, ct);
 
     public Task<Result<IReadOnlyList<IUser>>> GetReactionsAsync(Snowflake channelID,
         Snowflake messageID,
         string emoji,
         Optional<Snowflake> after = default,
         Optional<int> limit = default,
-        CancellationToken ct = default) => _actual.GetReactionsAsync(channelID, messageID, emoji, after, limit, ct);
+        CancellationToken ct = default) => actual.GetReactionsAsync(channelID, messageID, emoji, after, limit, ct);
 
-    public Task<Result> DeleteAllReactionsAsync(Snowflake channelID, Snowflake messageID, CancellationToken ct = default) => _actual.DeleteAllReactionsAsync(channelID, messageID, ct);
+    public Task<Result> DeleteAllReactionsAsync(Snowflake channelID, Snowflake messageID, CancellationToken ct = default) => actual.DeleteAllReactionsAsync(channelID, messageID, ct);
 
     public Task<Result> DeleteAllReactionsForEmojiAsync(Snowflake channelID, Snowflake messageID, string emoji, CancellationToken ct = default) =>
-        _actual.DeleteAllReactionsForEmojiAsync(channelID, messageID, emoji, ct);
+        actual.DeleteAllReactionsForEmojiAsync(channelID, messageID, emoji, ct);
 
     public Task<Result<IMessage>> EditMessageAsync(Snowflake channelID,
         Snowflake messageID,
@@ -181,13 +181,13 @@ public partial class CachingDiscordRestChannelAPI
         Optional<IReadOnlyList<IMessageComponent>?> components = default,
         Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>?> attachments = default,
         CancellationToken ct = default) =>
-        _actual.EditMessageAsync(channelID, messageID, content, embeds, flags, allowedMentions, components, attachments, ct);
+        actual.EditMessageAsync(channelID, messageID, content, embeds, flags, allowedMentions, components, attachments, ct);
 
     public Task<Result> DeleteMessageAsync(Snowflake channelID, Snowflake messageID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.DeleteMessageAsync(channelID, messageID, reason, ct);
+        actual.DeleteMessageAsync(channelID, messageID, reason, ct);
 
     public Task<Result> BulkDeleteMessagesAsync(Snowflake channelID, IReadOnlyList<Snowflake> messageIDs, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.BulkDeleteMessagesAsync(channelID, messageIDs, reason, ct);
+        actual.BulkDeleteMessagesAsync(channelID, messageIDs, reason, ct);
 
     public Task<Result> EditChannelPermissionsAsync(Snowflake channelID,
         Snowflake overwriteID,
@@ -196,9 +196,9 @@ public partial class CachingDiscordRestChannelAPI
         Optional<PermissionOverwriteType> type = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.EditChannelPermissionsAsync(channelID, overwriteID, allow, deny, type, reason, ct);
+        actual.EditChannelPermissionsAsync(channelID, overwriteID, allow, deny, type, reason, ct);
 
-    public Task<Result<IReadOnlyList<IInvite>>> GetChannelInvitesAsync(Snowflake channelID, CancellationToken ct = default) => _actual.GetChannelInvitesAsync(channelID, ct);
+    public Task<Result<IReadOnlyList<IInvite>>> GetChannelInvitesAsync(Snowflake channelID, CancellationToken ct = default) => actual.GetChannelInvitesAsync(channelID, ct);
 
     public Task<Result<IInvite>> CreateChannelInviteAsync(Snowflake channelID,
         Optional<TimeSpan> maxAge = default,
@@ -210,28 +210,28 @@ public partial class CachingDiscordRestChannelAPI
         Optional<Snowflake> targetApplicationID = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.CreateChannelInviteAsync(channelID, maxAge, maxUses, isTemporary, isUnique, targetType, targetUserID, targetApplicationID, reason, ct);
+        actual.CreateChannelInviteAsync(channelID, maxAge, maxUses, isTemporary, isUnique, targetType, targetUserID, targetApplicationID, reason, ct);
 
     public Task<Result> DeleteChannelPermissionAsync(Snowflake channelID, Snowflake overwriteID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.DeleteChannelPermissionAsync(channelID, overwriteID, reason, ct);
+        actual.DeleteChannelPermissionAsync(channelID, overwriteID, reason, ct);
 
     public Task<Result<IFollowedChannel>> FollowAnnouncementChannelAsync(Snowflake channelID, Snowflake webhookChannelID, CancellationToken ct = default) =>
-        _actual.FollowAnnouncementChannelAsync(channelID, webhookChannelID, ct);
+        actual.FollowAnnouncementChannelAsync(channelID, webhookChannelID, ct);
 
-    public Task<Result> TriggerTypingIndicatorAsync(Snowflake channelID, CancellationToken ct = default) => _actual.TriggerTypingIndicatorAsync(channelID, ct);
+    public Task<Result> TriggerTypingIndicatorAsync(Snowflake channelID, CancellationToken ct = default) => actual.TriggerTypingIndicatorAsync(channelID, ct);
 
-    public Task<Result<IReadOnlyList<IMessage>>> GetPinnedMessagesAsync(Snowflake channelID, CancellationToken ct = default) => _actual.GetPinnedMessagesAsync(channelID, ct);
+    public Task<Result<IReadOnlyList<IMessage>>> GetPinnedMessagesAsync(Snowflake channelID, CancellationToken ct = default) => actual.GetPinnedMessagesAsync(channelID, ct);
 
     public Task<Result> PinMessageAsync(Snowflake channelID, Snowflake messageID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.PinMessageAsync(channelID, messageID, reason, ct);
+        actual.PinMessageAsync(channelID, messageID, reason, ct);
 
     public Task<Result> UnpinMessageAsync(Snowflake channelID, Snowflake messageID, Optional<string> reason = default, CancellationToken ct = default) =>
-        _actual.UnpinMessageAsync(channelID, messageID, reason, ct);
+        actual.UnpinMessageAsync(channelID, messageID, reason, ct);
 
     public Task<Result> GroupDMAddRecipientAsync(Snowflake channelID, Snowflake userID, string accessToken, Optional<string> nickname = default, CancellationToken ct = default) =>
-        _actual.GroupDMAddRecipientAsync(channelID, userID, accessToken, nickname, ct);
+        actual.GroupDMAddRecipientAsync(channelID, userID, accessToken, nickname, ct);
 
-    public Task<Result> GroupDMRemoveRecipientAsync(Snowflake channelID, Snowflake userID, CancellationToken ct = default) => _actual.GroupDMRemoveRecipientAsync(channelID, userID, ct);
+    public Task<Result> GroupDMRemoveRecipientAsync(Snowflake channelID, Snowflake userID, CancellationToken ct = default) => actual.GroupDMRemoveRecipientAsync(channelID, userID, ct);
 
     public Task<Result<IChannel>> StartThreadFromMessageAsync(Snowflake channelID,
         Snowflake messageID,
@@ -240,7 +240,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<int?> rateLimitPerUser = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.StartThreadFromMessageAsync(channelID, messageID, name, autoArchiveDuration, rateLimitPerUser, reason, ct);
+        actual.StartThreadFromMessageAsync(channelID, messageID, name, autoArchiveDuration, rateLimitPerUser, reason, ct);
 
     public Task<Result<IChannel>> StartThreadWithoutMessageAsync(Snowflake channelID,
         string name,
@@ -250,7 +250,7 @@ public partial class CachingDiscordRestChannelAPI
         Optional<int?> rateLimitPerUser = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.StartThreadWithoutMessageAsync(channelID, name, type, autoArchiveDuration, isInvitable, rateLimitPerUser, reason, ct);
+        actual.StartThreadWithoutMessageAsync(channelID, name, type, autoArchiveDuration, isInvitable, rateLimitPerUser, reason, ct);
 
     public Task<Result<IChannel>> StartThreadInForumChannelAsync(Snowflake channelID,
         string name,
@@ -265,48 +265,48 @@ public partial class CachingDiscordRestChannelAPI
         Optional<MessageFlags> flags = default,
         Optional<string> reason = default,
         CancellationToken ct = default) =>
-        _actual.StartThreadInForumChannelAsync(channelID, name, autoArchiveDuration, rateLimitPerUser, content, embeds, allowedMentions, components, stickerIds, attachments, flags, reason, ct);
+        actual.StartThreadInForumChannelAsync(channelID, name, autoArchiveDuration, rateLimitPerUser, content, embeds, allowedMentions, components, stickerIds, attachments, flags, reason, ct);
 
-    public Task<Result> JoinThreadAsync(Snowflake channelID, CancellationToken ct = default) => _actual.JoinThreadAsync(channelID, ct);
+    public Task<Result> JoinThreadAsync(Snowflake channelID, CancellationToken ct = default) => actual.JoinThreadAsync(channelID, ct);
 
-    public Task<Result> AddThreadMemberAsync(Snowflake channelID, Snowflake userID, CancellationToken ct = default) => _actual.AddThreadMemberAsync(channelID, userID, ct);
+    public Task<Result> AddThreadMemberAsync(Snowflake channelID, Snowflake userID, CancellationToken ct = default) => actual.AddThreadMemberAsync(channelID, userID, ct);
 
-    public Task<Result> LeaveThreadAsync(Snowflake channelID, CancellationToken ct = default) => _actual.LeaveThreadAsync(channelID, ct);
+    public Task<Result> LeaveThreadAsync(Snowflake channelID, CancellationToken ct = default) => actual.LeaveThreadAsync(channelID, ct);
 
-    public Task<Result> RemoveThreadMemberAsync(Snowflake channelID, Snowflake userID, CancellationToken ct = default) => _actual.RemoveThreadMemberAsync(channelID, userID, ct);
+    public Task<Result> RemoveThreadMemberAsync(Snowflake channelID, Snowflake userID, CancellationToken ct = default) => actual.RemoveThreadMemberAsync(channelID, userID, ct);
 
     public Task<Result<IThreadMember>> GetThreadMemberAsync(Snowflake channelID, Snowflake userID, Optional<bool> withMember = default, CancellationToken ct = default) =>
-        _actual.GetThreadMemberAsync(channelID, userID, withMember, ct);
+        actual.GetThreadMemberAsync(channelID, userID, withMember, ct);
 
     public Task<Result<IReadOnlyList<IThreadMember>>> ListThreadMembersAsync(Snowflake channelID,
         Optional<bool> withMember = default,
         Optional<Snowflake> after = default,
         Optional<int> limit = default,
         CancellationToken ct = default) =>
-        _actual.ListThreadMembersAsync(channelID, withMember, after, limit, ct);
+        actual.ListThreadMembersAsync(channelID, withMember, after, limit, ct);
 
     public Task<Result<IChannelThreadQueryResponse>> ListPublicArchivedThreadsAsync(Snowflake channelID,
         Optional<DateTimeOffset> before = default,
         Optional<int> limit = default,
-        CancellationToken ct = default) => _actual.ListPublicArchivedThreadsAsync(channelID, before, limit, ct);
+        CancellationToken ct = default) => actual.ListPublicArchivedThreadsAsync(channelID, before, limit, ct);
 
     public Task<Result<IChannelThreadQueryResponse>> ListPrivateArchivedThreadsAsync(Snowflake channelID,
         Optional<DateTimeOffset> before = default,
         Optional<int> limit = default,
-        CancellationToken ct = default) => _actual.ListPrivateArchivedThreadsAsync(channelID, before, limit, ct);
+        CancellationToken ct = default) => actual.ListPrivateArchivedThreadsAsync(channelID, before, limit, ct);
 
     public Task<Result<IChannelThreadQueryResponse>> ListJoinedPrivateArchivedThreadsAsync(Snowflake channelID,
         Optional<Snowflake> before = default,
         Optional<int> limit = default,
-        CancellationToken ct = default) => _actual.ListJoinedPrivateArchivedThreadsAsync(channelID, before, limit, ct);
+        CancellationToken ct = default) => actual.ListJoinedPrivateArchivedThreadsAsync(channelID, before, limit, ct);
 
     public RestRequestCustomization WithCustomization(Action<RestRequestBuilder> requestCustomizer)
     {
-        if (_actual is not IRestCustomizable customizable)
+        if (actual is not IRestCustomizable customizable)
             throw new NotImplementedException("Decorated type is not IRestCustomizable.");
 
         return customizable.WithCustomization(requestCustomizer);
     }
 
-    public void RemoveCustomization(RestRequestCustomization customization) => (_actual as IRestCustomizable)?.RemoveCustomization(customization);
+    public void RemoveCustomization(RestRequestCustomization customization) => (actual as IRestCustomizable)?.RemoveCustomization(customization);
 }

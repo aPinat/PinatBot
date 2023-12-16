@@ -18,23 +18,13 @@ namespace PinatBot.Modules.Moderation.Commands;
 [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
 [DiscordDefaultDMPermission(false)]
 [RequireDiscordPermission(DiscordPermission.ManageGuild)]
-public class LoggingCommands : CommandGroup
+public class LoggingCommands(IDbContextFactory<Database> dbContextFactory, ICommandContext commandContext, FeedbackService feedbackService)
+    : CommandGroup
 {
     public enum LoggingType
     {
         General,
         Voice
-    }
-
-    private readonly ICommandContext _commandContext;
-    private readonly IDbContextFactory<Database> _dbContextFactory;
-    private readonly FeedbackService _feedbackService;
-
-    public LoggingCommands(IDbContextFactory<Database> dbContextFactory, ICommandContext commandContext, FeedbackService feedbackService)
-    {
-        _dbContextFactory = dbContextFactory;
-        _commandContext = commandContext;
-        _feedbackService = feedbackService;
     }
 
     private static async Task<LoggingConfig?> GetLoggingConfigAsync(LoggingType type, Database database, ulong guildId) =>
@@ -51,34 +41,34 @@ public class LoggingCommands : CommandGroup
     [Description("Show logging channel.")]
     public async Task<IResult> GetLoggingAsync(LoggingType type)
     {
-        if (!_commandContext.TryGetGuildID(out var guildId))
-            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
+        if (!commandContext.TryGetGuildID(out var guildId))
+            return await feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync();
+        await using var database = await dbContextFactory.CreateDbContextAsync();
         var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
         if (logging is null)
-            return await _feedbackService.SendContextualInfoAsync($"No {type} logging channel set.");
+            return await feedbackService.SendContextualInfoAsync($"No {type} logging channel set.");
 
         if (logging.Enabled)
-            return await _feedbackService.SendContextualInfoAsync($"{type} logging channel set to <#{logging.ChannelId}>");
+            return await feedbackService.SendContextualInfoAsync($"{type} logging channel set to <#{logging.ChannelId}>");
 
-        return await _feedbackService.SendContextualInfoAsync($"{type} logging is disabled.");
+        return await feedbackService.SendContextualInfoAsync($"{type} logging is disabled.");
     }
 
     [Command("set")]
     [Description("Set channel to send logs to.")]
     public async Task<IResult> SetLoggingAsync([Description("General or Voice logging")] LoggingType type, [Description("Channel to log to")] [ChannelTypes(ChannelType.GuildText)] IChannel channel)
     {
-        if (!_commandContext.TryGetGuildID(out var guildId))
-            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
+        if (!commandContext.TryGetGuildID(out var guildId))
+            return await feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
         if (channel.Type != ChannelType.GuildText)
-            return await _feedbackService.SendContextualErrorAsync("Channel must be a text channel.");
+            return await feedbackService.SendContextualErrorAsync("Channel must be a text channel.");
 
         if (channel.GuildID.Value != guildId)
-            return await _feedbackService.SendContextualErrorAsync("Channel must be in this server.");
+            return await feedbackService.SendContextualErrorAsync("Channel must be in this server.");
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync();
+        await using var database = await dbContextFactory.CreateDbContextAsync();
         var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
         if (logging is null)
         {
@@ -103,23 +93,23 @@ public class LoggingCommands : CommandGroup
         }
 
         await database.SaveChangesAsync();
-        return await _feedbackService.SendContextualSuccessAsync($"{type} logging channel set to {channel.Mention()}");
+        return await feedbackService.SendContextualSuccessAsync($"{type} logging channel set to {channel.Mention()}");
     }
 
     [Command("disable", "off", "none")]
     [Description("Disable logging.")]
     public async Task<IResult> DisableLoggingAsync(LoggingType type)
     {
-        if (!_commandContext.TryGetGuildID(out var guildId))
-            return await _feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
+        if (!commandContext.TryGetGuildID(out var guildId))
+            return await feedbackService.SendContextualErrorAsync("This command can only be used in a guild.");
 
-        await using var database = await _dbContextFactory.CreateDbContextAsync();
+        await using var database = await dbContextFactory.CreateDbContextAsync();
         var logging = await GetLoggingConfigAsync(type, database, guildId.Value);
         if (logging is null)
-            return await _feedbackService.SendContextualErrorAsync($"No {type} logging channel set.");
+            return await feedbackService.SendContextualErrorAsync($"No {type} logging channel set.");
 
         logging.Enabled = false;
         await database.SaveChangesAsync();
-        return await _feedbackService.SendContextualSuccessAsync($"{type} logging disabled.");
+        return await feedbackService.SendContextualSuccessAsync($"{type} logging disabled.");
     }
 }
