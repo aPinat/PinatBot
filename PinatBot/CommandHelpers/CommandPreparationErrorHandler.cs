@@ -11,7 +11,7 @@ using Remora.Results;
 
 namespace PinatBot.CommandHelpers;
 
-public class CommandPreparationErrorHandler(ILogger<CommandPreparationErrorHandler> logger, FeedbackService feedbackService) : IPreparationErrorEvent
+public class CommandPreparationErrorHandler(ILogger<CommandPreparationErrorHandler> logger, IFeedbackService feedbackService) : IPreparationErrorEvent
 {
     public async Task<Result> PreparationFailed(IOperationContext context, IResult preparationResult, CancellationToken ct = default)
     {
@@ -89,7 +89,7 @@ public class CommandPreparationErrorHandler(ILogger<CommandPreparationErrorHandl
         if (!replyResult.IsSuccess)
             return Result.FromError(replyResult);
 
-    SUCCESS:
+        SUCCESS:
         return Result.FromSuccess();
     }
 }

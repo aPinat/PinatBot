@@ -20,7 +20,7 @@ namespace PinatBot.Modules.Moderation.Commands;
 [DiscordDefaultDMPermission(false)]
 [RequireDiscordPermission(DiscordPermission.ManageRoles)]
 [RequireBotDiscordPermissions(DiscordPermission.ManageRoles)]
-public class MemberJoinRoleCommands(IDbContextFactory<Database> dbContextFactory, ICommandContext commandContext, FeedbackService feedbackService)
+public class MemberJoinRoleCommands(IDbContextFactory<Database> dbContextFactory, IOperationContext commandContext, IFeedbackService feedbackService)
     : CommandGroup
 {
     [Command("show", "get")]

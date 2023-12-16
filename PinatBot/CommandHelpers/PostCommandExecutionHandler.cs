@@ -10,7 +10,7 @@ using Remora.Results;
 
 namespace PinatBot.CommandHelpers;
 
-public class PostCommandExecutionHandler(ILogger<PostCommandExecutionHandler> logger, FeedbackService feedbackService) : IPostExecutionEvent
+public class PostCommandExecutionHandler(ILogger<PostCommandExecutionHandler> logger, IFeedbackService feedbackService) : IPostExecutionEvent
 {
     public async Task<Result> AfterExecutionAsync(ICommandContext context, IResult commandResult, CancellationToken ct = default)
     {
@@ -78,7 +78,7 @@ public class PostCommandExecutionHandler(ILogger<PostCommandExecutionHandler> lo
         if (!replyResult.IsSuccess)
             return Result.FromError(replyResult);
 
-    SUCCESS:
+        SUCCESS:
         return Result.FromSuccess();
     }
 }

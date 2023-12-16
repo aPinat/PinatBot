@@ -12,7 +12,7 @@ using Remora.Results;
 namespace PinatBot.Modules.Moderation.Commands;
 
 [DiscordDefaultDMPermission(false)]
-public class ModerationCommands(ICommandContext commandContext, FeedbackService feedbackService, Discord discord) : CommandGroup
+public class ModerationCommands(IOperationContext commandContext, IFeedbackService feedbackService, Discord discord) : CommandGroup
 {
     [Command("purge")]
     [Description("Purge a number of messages in this channel.")]

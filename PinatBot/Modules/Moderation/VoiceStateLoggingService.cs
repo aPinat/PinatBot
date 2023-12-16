@@ -38,7 +38,7 @@ public class VoiceStateLoggingService(IDbContextFactory<Database> dbContextFacto
             builder.Colour = Color.Lime;
             builder.Description = $"{user.Mention()} `{user.DiscordTag()}` **joined** `#{channel.Name.Value}` ({channel.Mention()})";
         }
-        else if (!vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id) is true && id.HasValue)
+        else if (!vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id) is true)
         {
             var channelResult = discord.GatewayCache.GetChannel(guildId, id.Value);
             if (!channelResult.IsDefined(out var channel))
@@ -47,7 +47,7 @@ public class VoiceStateLoggingService(IDbContextFactory<Database> dbContextFacto
             builder.Colour = Color.Red;
             builder.Description = $"{user.Mention()} `{user.DiscordTag()}` **left** `#{channel.Name.Value}` ({channel.Mention()})";
         }
-        else if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id2) is true && id2.HasValue)
+        else if (vsu.ChannelID.HasValue && oldVoiceState?.ChannelID.IsDefined(out var id2) is true)
         {
             var oldChannelResult = discord.GatewayCache.GetChannel(guildId, id2.Value);
             if (!oldChannelResult.IsDefined(out var oldChannel))

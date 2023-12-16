@@ -10,7 +10,7 @@ using Remora.Results;
 
 namespace PinatBot.Modules.General.Commands;
 
-public class GeneralCommands(FeedbackService feedbackService, Discord discord, ICommandContext context) : CommandGroup
+public class GeneralCommands(IFeedbackService feedbackService, Discord discord, IOperationContext context) : CommandGroup
 {
     [Command("echo", "say")]
     [Description("Echoes the message of the user.")]
@@ -70,7 +70,7 @@ public class GeneralCommands(FeedbackService feedbackService, Discord discord, I
         if (memberResult.IsDefined(out var member))
             return await feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(member, discord.JsonSerializerOptions)}```");
 
-    USER:
+        USER:
         return await feedbackService.SendContextualSuccessAsync($"```{JsonSerializer.Serialize(user, discord.JsonSerializerOptions)}```");
     }
 }

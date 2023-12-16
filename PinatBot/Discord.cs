@@ -28,8 +28,11 @@ public class Discord(
     DiscordGatewayCache gatewayCache)
 {
     public DiscordGatewayClient GatewayClient { get; } = gatewayClient;
-    public JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions(jsonOptions.Get("Discord")) { WriteIndented = true };
-    public DiscordRest Rest { get; } = new(application, auditLog, channel, emoji, gateway, guild, guildScheduledEvent, interaction, invite, oAuth2, stageInstance, sticker, template, user, voice, webhook);
+    public JsonSerializerOptions JsonSerializerOptions { get; } = new(jsonOptions.Get("Discord")) { WriteIndented = true };
+
+    public DiscordRest Rest { get; } = new(application, auditLog, channel, emoji, gateway, guild, guildScheduledEvent, interaction, invite, oAuth2, stageInstance, sticker, template, user, voice,
+        webhook);
+
     public DiscordGatewayCache GatewayCache { get; } = gatewayCache;
 
     public class DiscordRest(

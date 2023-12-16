@@ -45,14 +45,14 @@ public class DiscordGatewayCache(DistributedCacheProvider distributedCacheProvid
         return cachedMessageDistributed is null ? Result<IMessage>.FromError(new NotFoundError("Message not found in cache")) : Result<IMessage>.FromSuccess(cachedMessageDistributed);
     }
 
-    public async Task CacheMessageAsync(IMessage message, CancellationToken cancellationToken = default)
+    public Task CacheMessageAsync(IMessage message, CancellationToken cancellationToken = default)
     {
         var m = new Message(message.ID, message.ChannelID);
         m.Populate(message);
         InternalMessages[message.ID.Value] = m;
 
         var key = DistributedCacheProvider.CreateMessageCacheKey(message.ChannelID, message.ID);
-        await distributedCacheProvider.CacheAsync<IMessage>(key, m, cancellationToken);
+        return distributedCacheProvider.CacheAsync<IMessage>(key, m, cancellationToken);
     }
 
     public Result<IPartialVoiceState> GetVoiceState(Snowflake guildID, Snowflake userID) =>

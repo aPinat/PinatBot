@@ -18,7 +18,7 @@ namespace PinatBot.Modules.Moderation.Commands;
 [DiscordDefaultMemberPermissions(DiscordPermission.ManageGuild)]
 [DiscordDefaultDMPermission(false)]
 [RequireDiscordPermission(DiscordPermission.ManageGuild)]
-public class LoggingCommands(IDbContextFactory<Database> dbContextFactory, ICommandContext commandContext, FeedbackService feedbackService)
+public class LoggingCommands(IDbContextFactory<Database> dbContextFactory, IOperationContext commandContext, IFeedbackService feedbackService)
     : CommandGroup
 {
     public enum LoggingType

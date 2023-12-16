@@ -105,7 +105,7 @@ public class GeneralLoggingService(IDbContextFactory<Database> dbContextFactory,
 
         return await SendLogMessageAsync(logging.ChannelId, builder, attachmentsLog, cancellationToken);
 
-    SEND:
+        SEND:
         return await SendLogMessageAsync(logging.ChannelId, builder, cancellationToken: cancellationToken);
     }
 
@@ -165,7 +165,7 @@ public class GeneralLoggingService(IDbContextFactory<Database> dbContextFactory,
 
         return await SendLogMessageAsync(logging.ChannelId, builder, attachments, cancellationToken);
 
-    SEND:
+        SEND:
         return await SendLogMessageAsync(logging.ChannelId, builder, cancellationToken: cancellationToken);
     }
 
@@ -231,7 +231,7 @@ public class GeneralLoggingService(IDbContextFactory<Database> dbContextFactory,
                 builder.AddField("Reason", reason, true);
         }
 
-    SEND:
+        SEND:
         return await SendLogMessageAsync(logging.ChannelId, builder, cancellationToken: cancellationToken);
     }
 }

@@ -160,8 +160,8 @@ public class Guild(Snowflake id) : IGuildCreate.IAvailableGuild
 
         EmojisInternal.Clear();
         foreach (var emoji in g.Emojis)
-            if (emoji.ID is { } id)
-                EmojisInternal[id.Value] = emoji;
+            if (emoji.ID is { } emojiID)
+                EmojisInternal[emojiID.Value] = emoji;
 
         GuildFeatures = g.GuildFeatures;
         MFALevel = g.MFALevel;
@@ -257,8 +257,8 @@ public class Guild(Snowflake id) : IGuildCreate.IAvailableGuild
 
         EmojisInternal.Clear();
         foreach (var emoji in g.Emojis)
-            if (emoji.ID is { } id)
-                EmojisInternal[id.Value] = emoji;
+            if (emoji.ID is { } emojiID)
+                EmojisInternal[emojiID.Value] = emoji;
 
         GuildFeatures = g.GuildFeatures;
         MFALevel = g.MFALevel;

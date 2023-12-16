@@ -27,7 +27,7 @@ public class PrefixMatcher(DiscordGatewayCache cache, Configuration configuratio
         if (!messageContext.GuildID.HasValue)
             return ValueTask.FromResult(Result<(bool Matches, int ContentStartIndex)>.FromSuccess((true, 0)));
 
-    FALSE:
+        FALSE:
         return ValueTask.FromResult(Result<(bool Matches, int ContentStartIndex)>.FromSuccess((false, 0)));
     }
 }

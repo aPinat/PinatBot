@@ -148,7 +148,7 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         if (m.ID.Value != ID)
             throw new InvalidOperationException("Message ID mismatch");
 
-        if (m.ChannelID.IsDefined(out var channelID) && channelID != ChannelID)
+        if (m.ChannelID != ChannelID)
             throw new InvalidOperationException("Channel ID mismatch");
 
         if (m.GuildID.IsDefined(out var guildID))
