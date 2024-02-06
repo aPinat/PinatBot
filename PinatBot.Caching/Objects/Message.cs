@@ -68,6 +68,8 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
 
     public Optional<int> Position { get; private set; }
 
+    public Optional<IApplicationCommandInteractionDataResolved> Resolved { get; private set; }
+
     internal void Populate(IMessageCreate m)
     {
         if (m.ID != ID)
@@ -105,6 +107,7 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         Components = m.Components;
         StickerItems = m.StickerItems;
         Position = m.Position;
+        Resolved = m.Resolved;
     }
 
     internal void Populate(IMessage m)
@@ -141,6 +144,7 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         Components = m.Components;
         StickerItems = m.StickerItems;
         Position = m.Position;
+        Resolved = m.Resolved;
     }
 
     internal void Update(IMessageUpdate m)
@@ -237,5 +241,8 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
 
         if (m.Position.IsDefined(out var position))
             Position = position;
+
+        if (m.Resolved.IsDefined(out var resolved))
+            Resolved = new Optional<IApplicationCommandInteractionDataResolved>(resolved);
     }
 }

@@ -134,6 +134,17 @@ public partial class CachingDiscordRestChannelAPI
         actual.ModifyForumChannelAsync(channelID, name, position, topic, isNsfw, rateLimitPerUser, permissionOverwrites, parentID, defaultAutoArchiveDuration, flags, availableTags,
             defaultReactionEmoji, defaultThreadRateLimitPerUser, defaultSortOrder, defaultForumLayout, reason, ct);
 
+    public Task<Result<IChannel>> ModifyMediaChannelAsync(Snowflake channelID, Optional<string> name = default, Optional<int?> position = default,
+        Optional<string?> topic = default, Optional<bool?> isNsfw = default,
+        Optional<int?> rateLimitPerUser = default,
+        Optional<IReadOnlyList<IPartialPermissionOverwrite>?> permissionOverwrites = default,
+        Optional<Snowflake?> parentID = default, Optional<AutoArchiveDuration?> defaultAutoArchiveDuration = default,
+        Optional<ChannelFlags> flags = default, Optional<IReadOnlyList<IPartialForumTag>> availableTags = default,
+        Optional<IDefaultReaction?> defaultReactionEmoji = default, Optional<int> defaultThreadRateLimitPerUser = default,
+        Optional<SortOrder> defaultSortOrder = default, Optional<string> reason = default, CancellationToken ct = default) =>
+        actual.ModifyMediaChannelAsync(channelID, name, position, topic, isNsfw, rateLimitPerUser, permissionOverwrites, parentID, defaultAutoArchiveDuration, flags, availableTags,
+            defaultReactionEmoji, defaultThreadRateLimitPerUser, defaultSortOrder, reason, ct);
+
     public Task<Result> DeleteChannelAsync(Snowflake channelID, Optional<string> reason = default, CancellationToken ct = default) => actual.DeleteChannelAsync(channelID, reason, ct);
 
     public Task<Result<IMessage>> CreateMessageAsync(Snowflake channelID,
