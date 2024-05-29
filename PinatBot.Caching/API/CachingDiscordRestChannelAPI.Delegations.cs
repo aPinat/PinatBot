@@ -158,8 +158,10 @@ public partial class CachingDiscordRestChannelAPI
         Optional<IReadOnlyList<Snowflake>> stickerIDs = default,
         Optional<IReadOnlyList<OneOf<FileData, IPartialAttachment>>> attachments = default,
         Optional<MessageFlags> flags = default,
+        Optional<bool> enforceNonce = default,
+        Optional<IPollCreateRequest> poll = default,
         CancellationToken ct = default) =>
-        actual.CreateMessageAsync(channelID, content, nonce, isTTS, embeds, allowedMentions, messageReference, components, stickerIDs, attachments, flags, ct);
+        actual.CreateMessageAsync(channelID, content, nonce, isTTS, embeds, allowedMentions, messageReference, components, stickerIDs, attachments, flags, enforceNonce, poll, ct);
 
     public Task<Result<IMessage>> CrosspostMessageAsync(Snowflake channelID, Snowflake messageID, CancellationToken ct = default) => actual.CrosspostMessageAsync(channelID, messageID, ct);
 

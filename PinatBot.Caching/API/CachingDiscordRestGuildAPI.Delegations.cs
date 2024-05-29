@@ -220,6 +220,13 @@ public partial class CachingDiscordRestGuildAPI
     public Task<Result> RemoveGuildBanAsync(Snowflake guildID, Snowflake userID, Optional<string> reason = default, CancellationToken ct = default) =>
         actual.RemoveGuildBanAsync(guildID, userID, reason, ct);
 
+    public Task<Result<IBulkBanResponse>> BulkGuildBanAsync(Snowflake guildID,
+        IReadOnlyList<Snowflake> userIDs,
+        Optional<int> deleteMessageSeconds = default,
+        Optional<string> reason = default,
+        CancellationToken ct = default) =>
+        actual.BulkGuildBanAsync(guildID, userIDs, deleteMessageSeconds, reason, ct);
+
     public Task<Result<IRole>> CreateGuildRoleAsync(Snowflake guildID,
         Optional<string> name = default,
         Optional<IDiscordPermissionSet> permissions = default,

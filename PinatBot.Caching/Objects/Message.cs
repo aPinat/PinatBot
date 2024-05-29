@@ -70,6 +70,10 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
 
     public Optional<IApplicationCommandInteractionDataResolved> Resolved { get; private set; }
 
+    public Optional<IMessageInteractionMetadata> InteractionMetadata { get; private set; }
+
+    public Optional<IPoll> Poll { get; private set; }
+
     internal void Populate(IMessageCreate m)
     {
         if (m.ID != ID)
@@ -108,6 +112,8 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         StickerItems = m.StickerItems;
         Position = m.Position;
         Resolved = m.Resolved;
+        InteractionMetadata = m.InteractionMetadata;
+        Poll = m.Poll;
     }
 
     internal void Populate(IMessage m)
@@ -145,6 +151,8 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         StickerItems = m.StickerItems;
         Position = m.Position;
         Resolved = m.Resolved;
+        InteractionMetadata = m.InteractionMetadata;
+        Poll = m.Poll;
     }
 
     internal void Update(IMessageUpdate m)
@@ -244,5 +252,11 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
 
         if (m.Resolved.IsDefined(out var resolved))
             Resolved = new Optional<IApplicationCommandInteractionDataResolved>(resolved);
+
+        if (m.InteractionMetadata.IsDefined(out var interactionMetadata))
+            InteractionMetadata = new Optional<IMessageInteractionMetadata>(interactionMetadata);
+
+        if (m.Poll.IsDefined(out var poll))
+            Poll = new Optional<IPoll>(poll);
     }
 }
