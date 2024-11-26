@@ -19,9 +19,8 @@ public class DiscordConfig
 public class LavalinkConfig
 {
     public bool Enabled { get; init; } = false;
-    public string Host { get; init; } = null!;
-    public int Port { get; init; } = 2333;
-    public string Password { get; init; } = null!;
+    public string BaseAddress { get; init; } = null!;
+    public string Passphrase { get; init; } = null!;
 }
 
 public class ConnectionStrings

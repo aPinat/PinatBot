@@ -27,7 +27,7 @@ services:
       POSTGRES_PASSWORD: pinatbot
       POSTGRES_DB: pinatbot
   lavalink:
-    image: 'fredboat/lavalink:dev'
+    image: 'ghcr.io/lavalink-devs/lavalink:latest'
     container_name: lavalink-pinatbot
     restart: unless-stopped
     ports:

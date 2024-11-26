@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PinatBot.Modules.General.Commands;
 using PinatBot.Modules.Moderation.Commands;
+using PinatBot.Modules.Music.Commands;
 using Remora.Commands.Extensions;
 using Remora.Discord.Commands.Extensions;
 using Remora.Discord.Commands.Services;
@@ -18,12 +19,14 @@ public static class ServiceCollectionExtensions
             .AddDiscordCommands(true)
             .AddCommandTree(TreeNameResolver.MessageCommandTreeName)
             .WithCommandGroup<GeneralCommands>()
+            .WithCommandGroup<MusicCommands>()
             .Finish()
             .AddCommandTree(TreeNameResolver.InteractionCommandTreeName)
             .WithCommandGroup<GeneralCommands>()
             .WithCommandGroup<LoggingCommands>()
             .WithCommandGroup<MemberJoinRoleCommands>()
             .WithCommandGroup<ModerationCommands>()
+            .WithCommandGroup<MusicCommands>()
             .Finish()
             .AddInteractivity()
             .AddPagination()

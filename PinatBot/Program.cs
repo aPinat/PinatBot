@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Lavalink4NET.Extensions;
+using Lavalink4NET.Remora.Discord;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -55,6 +57,12 @@ await Host.CreateDefaultBuilder(args)
             .AddSingleton<AutoVoiceChannelService>()
             .AddResponder<AutoVoiceChannelResponder>()
             .AddPinatBotCommands()
+            .AddLavalink()
+            .ConfigureLavalink(options =>
+            {
+                options.BaseAddress = new Uri(configuration.Lavalink.BaseAddress);
+                options.Passphrase = configuration.Lavalink.Passphrase;
+            })
             .AddHostedService<PinatBot.PinatBot>();
     })
     .Build()
