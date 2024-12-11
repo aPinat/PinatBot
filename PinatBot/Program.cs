@@ -1,4 +1,6 @@
 ﻿using Lavalink4NET.Extensions;
+using Lavalink4NET.InactivityTracking.Extensions;
+using Lavalink4NET.InactivityTracking.Trackers.Users;
 using Lavalink4NET.Remora.Discord;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -62,6 +64,14 @@ await Host.CreateDefaultBuilder(args)
             {
                 options.BaseAddress = new Uri(configuration.Lavalink.BaseAddress);
                 options.Passphrase = configuration.Lavalink.Passphrase;
+            })
+            .AddInactivityTracking()
+            .AddInactivityTracker<UsersInactivityTracker>()
+            .Configure<UsersInactivityTrackerOptions>(options =>
+            {
+                options.Threshold = 2;
+                options.Timeout = TimeSpan.FromSeconds(5);
+                options.ExcludeBots = false;
             })
             .AddHostedService<PinatBot.PinatBot>();
     })

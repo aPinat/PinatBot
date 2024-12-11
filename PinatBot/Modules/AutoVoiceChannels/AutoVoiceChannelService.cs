@@ -19,7 +19,7 @@ public class AutoVoiceChannelService(IDbContextFactory<Database> dbContextFactor
         if (cacheResult.IsDefined(out var oldVoiceState) && oldVoiceState.ChannelID.IsDefined(out var channelID) && channelID == vsu.ChannelID)
             return Result.FromSuccess();
 
-        // We're blocking the the Caching Responder, so we manually cache this one.
+        // We're blocking the Caching Responder, so we manually cache this one.
         var cacheVoiceStateResult = discord.GatewayCache.CacheVoiceState(guildId, vsu);
         if (!cacheVoiceStateResult.IsSuccess)
             return cacheVoiceStateResult;
