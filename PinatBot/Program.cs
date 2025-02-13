@@ -44,7 +44,7 @@ await Host.CreateDefaultBuilder(args)
             .AddDiscordGateway(_ => configuration.Discord.BotToken)
             .Configure<DiscordGatewayClientOptions>(options =>
             {
-                options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildMembers | GatewayIntents.GuildEmojisAndStickers | GatewayIntents.GuildVoiceStates | GatewayIntents.GuildPresences |
+                options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildMembers | GatewayIntents.GuildExpressions | GatewayIntents.GuildVoiceStates | GatewayIntents.GuildPresences |
                                   GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContents;
                 options.Presence = new UpdatePresence(UserStatus.DND, false, null, new[] { new Activity("#Pinats", ActivityType.Competing) });
             })

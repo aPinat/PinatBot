@@ -54,6 +54,8 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
 
     public Optional<IMessageReference> MessageReference { get; private set; }
 
+    public Optional<IReadOnlyList<IMessageSnapshot>> MessageSnapshots { get; private set; }
+
     public Optional<MessageFlags> Flags { get; private set; }
 
     public Optional<IMessage?> ReferencedMessage { get; private set; }
@@ -73,6 +75,8 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
     public Optional<IMessageInteractionMetadata> InteractionMetadata { get; private set; }
 
     public Optional<IPoll> Poll { get; private set; }
+
+    public Optional<IMessageCall> Call { get; private set; }
 
     internal void Populate(IMessageCreate m)
     {
@@ -104,6 +108,7 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         Application = m.Application;
         ApplicationID = m.ApplicationID;
         MessageReference = m.MessageReference;
+        MessageSnapshots = m.MessageSnapshots;
         Flags = m.Flags;
         ReferencedMessage = m.ReferencedMessage;
         Interaction = m.Interaction;
@@ -114,6 +119,7 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         Resolved = m.Resolved;
         InteractionMetadata = m.InteractionMetadata;
         Poll = m.Poll;
+        Call = m.Call;
     }
 
     internal void Populate(IMessage m)
@@ -143,6 +149,7 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         Application = m.Application;
         ApplicationID = m.ApplicationID;
         MessageReference = m.MessageReference;
+        MessageSnapshots = m.MessageSnapshots;
         Flags = m.Flags;
         ReferencedMessage = m.ReferencedMessage;
         Interaction = m.Interaction;
@@ -153,6 +160,7 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         Resolved = m.Resolved;
         InteractionMetadata = m.InteractionMetadata;
         Poll = m.Poll;
+        Call = m.Call;
     }
 
     internal void Update(IMessageUpdate m)
@@ -163,100 +171,39 @@ public class Message(Snowflake id, Snowflake channelID) : IMessageCreate
         if (m.ChannelID != ChannelID)
             throw new InvalidOperationException("Channel ID mismatch");
 
-        if (m.GuildID.IsDefined(out var guildID))
-            GuildID = guildID;
-
-        if (m.Author.IsDefined(out var author))
-            Author = author;
-
-        if (m.Member.IsDefined(out var member))
-            Member = new Optional<IPartialGuildMember>(member);
-
-        if (m.Content.IsDefined(out var content))
-            Content = content;
-
-        if (m.Timestamp.IsDefined(out var timestamp))
-            Timestamp = timestamp;
-
-        if (m.EditedTimestamp.IsDefined(out var editedTimestamp))
-            EditedTimestamp = editedTimestamp;
-
-        if (m.IsTTS.IsDefined(out var isTTS))
-            IsTTS = isTTS;
-
-        if (m.MentionsEveryone.IsDefined(out var mentionsEveryone))
-            MentionsEveryone = mentionsEveryone;
-
-        if (m.Mentions.IsDefined(out var mentions))
-            Mentions = mentions;
-
-        if (m.MentionedRoles.IsDefined(out var mentionedRoles))
-            MentionedRoles = mentionedRoles;
-
-        if (m.MentionedChannels.IsDefined(out var mentionedChannels))
-            MentionedChannels = new Optional<IReadOnlyList<IChannelMention>>(mentionedChannels);
-
-        if (m.Attachments.IsDefined(out var attachments))
-            Attachments = attachments;
-
-        if (m.Embeds.IsDefined(out var embeds))
-            Embeds = embeds;
-
-        if (m.Reactions.IsDefined(out var reactions))
-            Reactions = new Optional<IReadOnlyList<IReaction>>(reactions);
-
-        if (m.Nonce.IsDefined(out var nonce))
-            Nonce = nonce;
-
-        if (m.IsPinned.IsDefined(out var isPinned))
-            IsPinned = isPinned;
-
-        if (m.WebhookID.IsDefined(out var webhookID))
-            WebhookID = webhookID;
-
-        if (m.Type.IsDefined(out var type))
-            Type = type;
-
-        if (m.Activity.IsDefined(out var activity))
-            Activity = new Optional<IMessageActivity>(activity);
-
-        if (m.Application.IsDefined(out var application))
-            Application = new Optional<IPartialApplication>(application);
-
-        if (m.ApplicationID.IsDefined(out var applicationID))
-            ApplicationID = applicationID;
-
-        if (m.MessageReference.IsDefined(out var messageReference))
-            MessageReference = new Optional<IMessageReference>(messageReference);
-
-        if (m.Flags.IsDefined(out var flags))
-            Flags = flags;
-
-        if (m.ReferencedMessage.IsDefined(out var referencedMessage))
-            ReferencedMessage = new Optional<IMessage?>(referencedMessage);
-
-        if (m.Interaction.IsDefined(out var interaction))
-            Interaction = new Optional<IMessageInteraction>(interaction);
-
-        if (m.Thread.IsDefined(out var thread))
-            Thread = new Optional<IChannel>(thread);
-
-        if (m.Components.IsDefined(out var components))
-            Components = new Optional<IReadOnlyList<IMessageComponent>>(components);
-
-        if (m.StickerItems.IsDefined(out var stickerItems))
-            StickerItems = new Optional<IReadOnlyList<IStickerItem>>(stickerItems);
-
-        if (m.Position.IsDefined(out var position))
-            Position = position;
-
-        if (m.Resolved.IsDefined(out var resolved))
-            Resolved = new Optional<IApplicationCommandInteractionDataResolved>(resolved);
-
-        if (m.InteractionMetadata.IsDefined(out var interactionMetadata))
-            InteractionMetadata = new Optional<IMessageInteractionMetadata>(interactionMetadata);
-
-        if (m.Poll.IsDefined(out var poll))
-            Poll = new Optional<IPoll>(poll);
+        GuildID = m.GuildID;
+        Author = m.Author;
+        Member = m.Member;
+        Content = m.Content;
+        Timestamp = m.Timestamp;
+        EditedTimestamp = m.EditedTimestamp;
+        IsTTS = m.IsTTS;
+        MentionsEveryone = m.MentionsEveryone;
+        Mentions = m.Mentions;
+        MentionedRoles = m.MentionedRoles;
+        MentionedChannels = m.MentionedChannels;
+        Attachments = m.Attachments;
+        Embeds = m.Embeds;
+        Reactions = m.Reactions;
+        Nonce = m.Nonce;
+        IsPinned = m.IsPinned;
+        WebhookID = m.WebhookID;
+        Type = m.Type;
+        Activity = m.Activity;
+        Application = m.Application;
+        ApplicationID = m.ApplicationID;
+        MessageReference = m.MessageReference;
+        MessageSnapshots = m.MessageSnapshots;
+        Flags = m.Flags;
+        ReferencedMessage = m.ReferencedMessage;
+        Interaction = m.Interaction;
+        Thread = m.Thread;
+        Components = m.Components;
+        StickerItems = m.StickerItems;
+        Position = m.Position;
+        Resolved = m.Resolved;
+        InteractionMetadata = m.InteractionMetadata;
+        Poll = m.Poll;
+        Call = m.Call;
     }
 }

@@ -10,13 +10,10 @@ public class MessageUpdate(DiscordGatewayCache cache, DistributedCacheProvider d
 {
     public async Task<Result> RespondAsync(IMessageUpdate m, CancellationToken ct = default)
     {
-        if (!m.ChannelID.IsDefined(out var channelID) || !m.ID.IsDefined(out var messageID))
-            return Result.FromError(new InvalidOperationError("ChannelID or MessageID is not defined"));
+        var key = DistributedCacheProvider.CreateMessageCacheKey(m.ChannelID, m.ID);
 
-        var key = DistributedCacheProvider.CreateMessageCacheKey(channelID, messageID);
-
-        if (!cache.InternalMessages.TryGetValue(messageID.Value, out var cachedMessage))
-            cachedMessage = new Message(messageID, channelID);
+        if (!cache.InternalMessages.TryGetValue(m.ID.Value, out var cachedMessage))
+            cachedMessage = new Message(m.ID, m.ChannelID);
 
         cachedMessage.Update(m);
         await distributedCacheProvider.CacheAsync<IMessage>(key, cachedMessage, ct);

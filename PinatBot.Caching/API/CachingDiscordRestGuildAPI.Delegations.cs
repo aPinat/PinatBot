@@ -279,8 +279,7 @@ public partial class CachingDiscordRestGuildAPI
         actual.BeginGuildPruneAsync(guildID, days, computePruneCount, includeRoles, reason, ct);
 
     public Task<Result<IReadOnlyList<IVoiceRegion>>> GetGuildVoiceRegionsAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildVoiceRegionsAsync(guildID, ct);
-
-    public Task<Result<IReadOnlyList<IInvite>>> GetGuildInvitesAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildInvitesAsync(guildID, ct);
+    public Task<Result<IReadOnlyList<IInviteWithMetadata>>> GetGuildInvitesAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildInvitesAsync(guildID, ct);
 
     public Task<Result<IReadOnlyList<IIntegration>>> GetGuildIntegrationsAsync(Snowflake guildID, CancellationToken ct = default) => actual.GetGuildIntegrationsAsync(guildID, ct);
 
@@ -337,6 +336,12 @@ public partial class CachingDiscordRestGuildAPI
         Optional<bool> suppress = default,
         CancellationToken ct = default) =>
         actual.ModifyUserVoiceStateAsync(guildID, userID, channelID, suppress, ct);
+
+    public Task<Result<IIncidentsData>> ModifyGuildIncidentActionsAsync(Snowflake guildID,
+        Optional<DateTimeOffset?> invitesDisabledUntil = default,
+        Optional<DateTimeOffset?> dmsDisabledUntil = default,
+        CancellationToken ct = default) =>
+        actual.ModifyGuildIncidentActionsAsync(guildID, invitesDisabledUntil, dmsDisabledUntil, ct);
 
     public RestRequestCustomization WithCustomization(Action<RestRequestBuilder> requestCustomizer)
     {

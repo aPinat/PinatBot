@@ -135,6 +135,9 @@ public class Guild(Snowflake id) : IGuildCreate.IAvailableGuild
 
     public Snowflake? SafetyAlertsChannelID { get; private set; }
 
+    public IIncidentsData? IncidentsData { get; private set; }
+
+
     internal void Populate(IGuildCreate.IAvailableGuild g)
     {
         if (g.ID != ID)
@@ -230,6 +233,7 @@ public class Guild(Snowflake id) : IGuildCreate.IAvailableGuild
             GuildScheduledEventsInternal[guildScheduledEvent.ID.Value] = guildScheduledEvent;
 
         SafetyAlertsChannelID = g.SafetyAlertsChannelID;
+        IncidentsData = g.IncidentsData;
     }
 
     internal void Update(IGuildUpdate g)
@@ -291,6 +295,7 @@ public class Guild(Snowflake id) : IGuildCreate.IAvailableGuild
 
         IsPremiumProgressBarEnabled = g.IsPremiumProgressBarEnabled;
         SafetyAlertsChannelID = g.SafetyAlertsChannelID;
+        IncidentsData = g.IncidentsData;
     }
 
     internal void Update(IPresenceUpdate p, Snowflake userId) => PresencesInternal[userId.Value] = p;

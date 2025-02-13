@@ -30,15 +30,14 @@ public class GeneralLoggingService(IDbContextFactory<Database> dbContextFactory,
         if (!messageResult.IsDefined(out var message))
             return Result.FromError(messageResult);
         var attachmentResult =
-            await discord.Rest.Channel.CreateMessageAsync(id, "Deleted Attachment(s):", attachments: attachments, messageReference: new MessageReference(message.ID), ct: cancellationToken);
+            await discord.Rest.Channel.CreateMessageAsync(id, "Deleted Attachment(s):", attachments: attachments, messageReference: new MessageReference(MessageID: message.ID), ct: cancellationToken);
         return messageResult.IsSuccess && attachmentResult.IsSuccess ? Result.FromSuccess() :
             messageResult.IsSuccess ? Result.FromError(attachmentResult) : Result.FromError(messageResult);
     }
 
     public async Task<Result> LogMessageUpdatedAsync(IMessageUpdate m, CancellationToken cancellationToken = default)
     {
-        if (!m.GuildID.IsDefined(out var guildId) || !m.ChannelID.IsDefined(out var channelId) || !m.ID.IsDefined(out var messageId) || !m.Author.IsDefined(out var author) ||
-            (author.IsBot.IsDefined(out var isBot) && isBot) || m.WebhookID.HasValue || m.ApplicationID.HasValue || !m.EditedTimestamp.HasValue)
+        if (!m.GuildID.IsDefined(out var guildId) || (m.Author.IsBot.IsDefined(out var isBot) && isBot) || m.WebhookID.HasValue || m.ApplicationID.HasValue || !m.EditedTimestamp.HasValue)
             return Result.FromSuccess();
 
         await using var database = await dbContextFactory.CreateDbContextAsync(cancellationToken);
@@ -46,19 +45,19 @@ public class GeneralLoggingService(IDbContextFactory<Database> dbContextFactory,
         if (logging is not { Enabled: true })
             return Result.FromSuccess();
 
-        var cacheResult = await discord.GatewayCache.GetMessageAsync(messageId, channelId, cancellationToken);
+        var cacheResult = await discord.GatewayCache.GetMessageAsync(m.ID, m.ChannelID, cancellationToken);
         var beforeContent = !cacheResult.IsDefined(out var previousMessage) ? "_Message not in cache!_" :
             string.IsNullOrEmpty(previousMessage.Content) ? "_Message has no content!_" : previousMessage.Content;
-        var afterContent = m.Content.IsDefined(out var content) && !string.IsNullOrEmpty(content) ? content : "_Message has no content!_";
+        var afterContent = !string.IsNullOrEmpty(m.Content) ? m.Content : "_Message has no content!_";
 
-        var thumbnailUrl = author.AvatarUrl().ToString();
+        var thumbnailUrl = m.Author.AvatarUrl().ToString();
         var builder = new EmbedBuilder
         {
             Title = "Message Edited",
             Colour = Color.Orange,
             Timestamp = DateTimeOffset.Now,
             ThumbnailUrl = thumbnailUrl,
-            Author = new EmbedAuthorBuilder($"{author.DiscordTag()}", iconUrl: thumbnailUrl)
+            Author = new EmbedAuthorBuilder($"{m.Author.DiscordTag()}", iconUrl: thumbnailUrl)
         };
 
         if (beforeContent.Length < 1024 && afterContent.Length < 1024)
@@ -75,26 +74,26 @@ public class GeneralLoggingService(IDbContextFactory<Database> dbContextFactory,
             builder.Description = $"**Original Message**\n{beforeContent}\n\n**Edited Message**\n_Check link below!_";
         }
 
-        builder.AddField("Author", author.Mention(), true);
-        builder.AddField("Channel", $"<#{channelId}>", true);
-        builder.AddField("Message ID", $"[{messageId}]({m.Link(guildId, channelId, messageId)})");
+        builder.AddField("Author", m.Author.Mention(), true);
+        builder.AddField("Channel", $"<#{m.ChannelID}>", true);
+        builder.AddField("Message ID", $"[{m.ID}]({m.Link(guildId, m.ChannelID, m.ID)})");
 
         if (previousMessage is null)
             goto SEND;
 
         var embedBefore = previousMessage.Embeds.Count;
-        var embedAfter = m.Embeds.IsDefined(out var embeds) ? embeds.Count.ToString() : "None";
+        var embedAfter = m.Embeds.Count;
         builder.AddField("Embeds", $"{embedBefore} >> {embedAfter}", true);
 
         var attachmentBefore = previousMessage.Attachments.Count;
-        var attachmentAfter = m.Attachments.IsDefined(out var attachments) ? attachments.Count.ToString() : "None";
+        var attachmentAfter = m.Attachments.Count;
         builder.AddField("Attachments", $"{attachmentBefore} >> {attachmentAfter}", true);
 
-        if (!previousMessage.Attachments.Any() || attachmentBefore == attachments?.Count)
+        if (!previousMessage.Attachments.Any() || attachmentBefore == attachmentAfter)
             goto SEND;
 
         var attachmentsLog = new List<OneOf<FileData, IPartialAttachment>>();
-        var removedAttachments = attachments is null ? previousMessage.Attachments : previousMessage.Attachments.Except(attachments);
+        var removedAttachments = previousMessage.Attachments.Except(m.Attachments);
         foreach (var attachment in removedAttachments)
         {
             var stream = await _httpClient.GetStreamAsync(attachment.Url, cancellationToken);
