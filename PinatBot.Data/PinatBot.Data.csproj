@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <MicrosoftEntityFrameworkCore>9.0.11</MicrosoftEntityFrameworkCore>
+    <MicrosoftEntityFrameworkCore>10.0.0</MicrosoftEntityFrameworkCore>
   </PropertyGroup>
 
   <ItemGroup>
