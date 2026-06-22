@@ -45,7 +45,7 @@ await Host.CreateDefaultBuilder(args)
             .Configure<DiscordGatewayClientOptions>(options =>
             {
                 options.Intents = GatewayIntents.Guilds | GatewayIntents.GuildMembers | GatewayIntents.GuildExpressions | GatewayIntents.GuildVoiceStates | GatewayIntents.GuildPresences |
-                                  GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContents;
+                                  GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContent;
                 options.Presence = new UpdatePresence(UserStatus.DND, false, null, new[] { new Activity("#Pinats", ActivityType.Competing) });
             })
             .AddPinatBotCaching(options => options.Configuration = configuration.ConnectionStrings.Redis)
