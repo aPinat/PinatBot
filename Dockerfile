@@ -17,7 +17,7 @@ RUN dotnet build -c Release --no-restore
 FROM build AS publish
 RUN dotnet publish -c Release --no-build -o /app
 
-FROM mcr.microsoft.com/dotnet/runtime:10.0.12@sha256:b56f50a8a222df56758a43a115c05b6bf7014d6050e01d444db18f3a0cedc288
+FROM mcr.microsoft.com/dotnet/runtime:10.0.12@sha256:b89586dc17781f25531909993658aa8161205ae38b8cec8847df4a8221a403d5
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "PinatBot.dll"]
